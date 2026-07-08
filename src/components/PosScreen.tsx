@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { LogOut, Search, Grid3X3, Sparkles, ShoppingCart } from 'lucide-react';
+import { LogOut, Search, Grid3X3, Sparkles, ShoppingCart, Settings as SettingsIcon } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../lib/supabase';
 import type { Employee, Settings, Product, Service, Category, CartItem } from '../lib/types';
 import Cart from './Cart';
@@ -9,11 +9,12 @@ interface Props {
   employee: Employee;
   settings: Settings;
   onLogout: () => void;
+  onOpenBackOffice?: () => void;
 }
 
 type TabView = 'products' | 'services';
 
-export default function PosScreen({ employee, settings, onLogout }: Props) {
+export default function PosScreen({ employee, settings, onLogout, onOpenBackOffice }: Props) {
   const [products, setProducts] = useState<Product[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -103,6 +104,15 @@ export default function PosScreen({ employee, settings, onLogout }: Props) {
         </div>
         <div className="flex items-center gap-2 text-sm text-slate-600">
           <span className="hidden sm:block truncate">{employee.first_name} {employee.last_name}</span>
+          {onOpenBackOffice && (
+            <button
+              onClick={onOpenBackOffice}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 text-sm font-medium transition"
+            >
+              <SettingsIcon className="w-4 h-4" />
+              <span className="hidden sm:inline">Back Office</span>
+            </button>
+          )}
           <button
             onClick={onLogout}
             className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 active:bg-slate-200 transition"

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingBag, Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { ShoppingBag, Eye, EyeOff, LoaderCircle, Mail, Lock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export default function LoginScreen() {
@@ -14,7 +14,7 @@ export default function LoginScreen() {
     setError('');
     setLoading(true);
     const { error: authError } = await supabase.auth.signInWithPassword({ email, password });
-    if (authError) setError('Invalid email or password.');
+    if (authError) setError(authError.message);
     setLoading(false);
   }
 
@@ -36,25 +36,29 @@ export default function LoginScreen() {
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-              placeholder="you@example.com"
-              autoComplete="email"
-              required
-            />
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-9 pr-3 py-3 rounded-xl border border-slate-200 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+              />
+            </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
             <div className="relative">
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type={showPw ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 pr-12 rounded-xl border border-slate-200 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                className="w-full pl-9 pr-12 py-3 rounded-xl border border-slate-200 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
                 placeholder="••••••••"
                 autoComplete="current-password"
                 required

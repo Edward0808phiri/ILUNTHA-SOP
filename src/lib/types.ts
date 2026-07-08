@@ -3,7 +3,7 @@ export interface Employee {
   first_name: string;
   last_name: string;
   role: 'Admin' | 'Supervisor' | 'Cashier';
-  auth_user_id: string;
+  username: string;
 }
 
 export interface Settings {
