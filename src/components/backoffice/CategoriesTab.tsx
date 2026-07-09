@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿﻿import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
 import Modal, { Field, inputCls } from './Modal';
@@ -47,11 +47,11 @@ export default function CategoriesTab() {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition">
+        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-xl hover:bg-pink-700 transition">
           <Plus className="w-4 h-4" /> Add Category
         </button>
       </div>
-      {loading ? <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div> : (
+      {loading ? <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div> : (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-slate-100 text-slate-500 text-left">
@@ -65,7 +65,7 @@ export default function CategoriesTab() {
                   <td className="px-4 py-3 font-medium text-slate-800">{c.name}</td>
                   <td className="px-4 py-3 text-center text-slate-500">{c.sort_order}</td>
                   <td className="px-4 py-3 flex items-center gap-1 justify-end">
-                    <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600"><Pencil className="w-4 h-4" /></button>
+                    <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-pink-50 text-slate-400 hover:text-pink-600"><Pencil className="w-4 h-4" /></button>
                     <button onClick={() => setDeleteConfirm(c.id)} className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-500"><Trash2 className="w-4 h-4" /></button>
                   </td>
                 </tr>
@@ -84,7 +84,7 @@ export default function CategoriesTab() {
             <Field label="Sort Order"><input type="number" min="0" className={inputCls} value={form.sort_order} onChange={e => setForm(f => ({ ...f, sort_order: e.target.value }))} /></Field>
             <div className="flex gap-2 pt-2">
               <button onClick={() => setModal(null)} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium">Cancel</button>
-              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium disabled:opacity-60">{saving ? 'Saving…' : 'Save'}</button>
+              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-medium disabled:opacity-60">{saving ? 'Saving...' : 'Save'}</button>
             </div>
           </div>
         </Modal>
@@ -102,3 +102,4 @@ export default function CategoriesTab() {
     </div>
   );
 }
+

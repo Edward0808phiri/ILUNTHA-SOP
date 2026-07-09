@@ -29,50 +29,55 @@ export default function Cart({ cart, setCart, currencySymbol, taxRate, onCheckou
   }
 
   return (
-    <div className="flex flex-col h-full bg-white border-l border-slate-200">
-      <div className="px-4 py-3 border-b border-slate-100 flex items-center gap-2">
-        <ShoppingCart className="w-5 h-5 text-indigo-500" />
+    <div className="flex flex-col h-full bg-white border-l border-pink-100">
+      {/* Header */}
+      <div className="px-4 py-3.5 border-b border-slate-100 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-xl bg-pink-50 flex items-center justify-center">
+          <ShoppingCart className="w-4 h-4 text-pink-500" />
+        </div>
         <span className="font-bold text-slate-800">Cart</span>
         {cart.length > 0 && (
-          <span className="ml-auto text-xs bg-indigo-100 text-indigo-700 font-semibold px-2 py-0.5 rounded-full">
+          <span className="ml-auto text-xs bg-pink-100 text-pink-700 font-bold px-2.5 py-0.5 rounded-full">
             {cart.reduce((s, i) => s + i.quantity, 0)}
           </span>
         )}
       </div>
 
+      {/* Items */}
       <div className="flex-1 overflow-y-auto">
         {cart.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2">
-            <ShoppingCart className="w-10 h-10 opacity-30" />
-            <span className="text-sm">Cart is empty</span>
+          <div className="flex flex-col items-center justify-center h-full text-slate-300 gap-3">
+            <ShoppingCart className="w-12 h-12 opacity-40" />
+            <span className="text-sm font-medium">Cart is empty</span>
+            <span className="text-xs opacity-60">Tap a product to add</span>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-50">
             {cart.map((item, idx) => (
-              <div key={`${item.type}-${item.id}`} className="px-4 py-3 flex items-center gap-2">
+              <div key={`${item.type}-${item.id}`} className="px-4 py-3 flex items-center gap-2.5">
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-slate-800 truncate">{item.name}</div>
-                  <div className="text-sm text-indigo-600 font-semibold">
+                  <div className="text-sm font-semibold text-slate-800 truncate">{item.name}</div>
+                  <div className="text-sm text-pink-500 font-bold mt-0.5">
                     {currencySymbol}{(item.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => adjust(idx, -1)}
-                    className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center active:bg-slate-200 text-slate-600"
+                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-pink-50 hover:text-pink-600 flex items-center justify-center transition text-slate-500"
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
-                  <span className="w-7 text-center text-sm font-semibold text-slate-800">{item.quantity}</span>
+                  <span className="w-7 text-center text-sm font-bold text-slate-800">{item.quantity}</span>
                   <button
                     onClick={() => adjust(idx, 1)}
-                    className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center active:bg-slate-200 text-slate-600"
+                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-pink-50 hover:text-pink-600 flex items-center justify-center transition text-slate-500"
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => remove(idx)}
-                    className="w-7 h-7 rounded-lg text-slate-400 hover:text-rose-500 flex items-center justify-center ml-1"
+                    className="w-7 h-7 rounded-lg text-slate-300 hover:text-rose-400 hover:bg-rose-50 flex items-center justify-center transition ml-1"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -83,31 +88,33 @@ export default function Cart({ cart, setCart, currencySymbol, taxRate, onCheckou
         )}
       </div>
 
+      {/* Totals + charge */}
       {cart.length > 0 && (
-        <div className="border-t border-slate-100 p-4 space-y-1">
-          <div className="flex justify-between text-sm text-slate-500">
+        <div className="border-t border-slate-100 p-4 space-y-1.5">
+          <div className="flex justify-between text-sm text-slate-400">
             <span>Subtotal</span>
-            <span>{currencySymbol}{subtotal.toFixed(2)}</span>
+            <span className="font-medium text-slate-600">{currencySymbol}{subtotal.toFixed(2)}</span>
           </div>
           {taxRate > 0 && (
-            <div className="flex justify-between text-sm text-slate-500">
+            <div className="flex justify-between text-sm text-slate-400">
               <span>Tax ({taxRate}%)</span>
-              <span>{currencySymbol}{tax.toFixed(2)}</span>
+              <span className="font-medium text-slate-600">{currencySymbol}{tax.toFixed(2)}</span>
             </div>
           )}
-          <div className="flex justify-between font-bold text-lg text-slate-900 pt-1">
+          <div className="flex justify-between font-bold text-xl text-slate-900 pt-1.5 border-t border-slate-100">
             <span>Total</span>
-            <span>{currencySymbol}{total.toFixed(2)}</span>
+            <span className="text-pink-600">{currencySymbol}{total.toFixed(2)}</span>
           </div>
           <button
             onClick={onCheckout}
-            className="w-full mt-3 py-3.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold rounded-xl transition text-base"
+            className="w-full mt-3 py-4 bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white font-bold rounded-2xl transition text-base"
+            style={{ boxShadow: '0 4px 16px rgba(219,39,119,0.3)' }}
           >
             Charge {currencySymbol}{total.toFixed(2)}
           </button>
           <button
             onClick={() => setCart([])}
-            className="w-full py-2 text-sm text-slate-400 hover:text-slate-600 transition"
+            className="w-full py-2 text-sm text-slate-300 hover:text-slate-500 transition"
           >
             Clear cart
           </button>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿﻿import { useEffect, useState } from 'react';
 import { supabase, BUSINESS_ID } from '../../lib/supabase';
 
 interface Sale {
@@ -36,7 +36,7 @@ export default function SalesTab({ currencySymbol }: Props) {
     partially_refunded: 'bg-amber-100 text-amber-700',
   };
 
-  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
@@ -56,7 +56,7 @@ export default function SalesTab({ currencySymbol }: Props) {
               <td className="px-4 py-3 font-mono text-slate-700">{sale.invoice_number}</td>
               <td className="px-4 py-3 text-slate-500">{new Date(sale.created_at).toLocaleString()}</td>
               <td className="px-4 py-3 text-slate-600">
-                {sale.employees ? `${sale.employees.first_name} ${sale.employees.last_name}` : '—'}
+                {sale.employees ? `${sale.employees.first_name} ${sale.employees.last_name}` : 'â€”'}
               </td>
               <td className="px-4 py-3 text-right font-semibold text-slate-800">{currencySymbol}{Number(sale.total).toFixed(2)}</td>
               <td className="px-4 py-3">
@@ -74,3 +74,4 @@ export default function SalesTab({ currencySymbol }: Props) {
     </div>
   );
 }
+

@@ -35,30 +35,48 @@ export default function BackOffice({ employee, settings, onClose }: Props) {
   const active = TABS.find(t => t.key === activeTab)!;
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col">
-      <header className="bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3 shrink-0">
+    <div className="min-h-screen bg-[#FAF5F7] flex flex-col">
+      {/* Header */}
+      <header className="bg-white border-b border-pink-100 px-4 py-3 flex items-center gap-3 shrink-0 shadow-sm">
         <button
           onClick={onClose}
-          className="flex items-center gap-2 text-slate-500 hover:text-indigo-600 transition text-sm font-medium"
+          className="flex items-center gap-2 text-slate-500 hover:text-pink-600 transition text-sm font-semibold"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to POS
         </button>
-        <span className="text-slate-300">|</span>
-        <span className="font-bold text-slate-800">{active.label}</span>
-        <span className="ml-auto text-xs text-slate-400">{employee.first_name} · {employee.role}</span>
+        <span className="text-slate-200">|</span>
+        <span
+          className="font-bold text-slate-800"
+          style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+        >
+          {active.label}
+        </span>
+        <div className="ml-auto flex items-center gap-2">
+          <span className="text-xs text-slate-400 font-medium">{employee.first_name}</span>
+          <span className="text-xs bg-pink-100 text-pink-700 font-semibold px-2 py-0.5 rounded-full">{employee.role}</span>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
-        <nav className="w-48 shrink-0 bg-white border-r border-slate-200 flex flex-col py-3 gap-1 overflow-y-auto">
+        <nav
+          className="w-52 shrink-0 flex flex-col py-3 gap-0.5 overflow-y-auto"
+          style={{ background: '#160D10' }}
+        >
+          <div className="px-4 pt-1 pb-3 mb-1 border-b border-white/5">
+            <p className="text-[10px] font-bold text-pink-400/50 uppercase tracking-[0.2em]">Back Office</p>
+          </div>
           {TABS.map(({ key, label, icon: Icon }) => (
             <button
               key={key}
               onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
-                activeTab === key ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'
+              className={`flex items-center gap-3 mx-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition ${
+                activeTab === key
+                  ? 'bg-pink-600 text-white'
+                  : 'text-slate-400 hover:text-white hover:bg-white/8'
               }`}
+              style={activeTab === key ? { boxShadow: '0 2px 12px rgba(219,39,119,0.4)' } : {}}
             >
               <Icon className="w-4 h-4 shrink-0" />
               {label}

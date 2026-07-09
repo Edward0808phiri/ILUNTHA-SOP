@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ShoppingBag, Eye, EyeOff, LoaderCircle, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, LoaderCircle, Mail, Lock } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 export default function LoginScreen() {
@@ -19,69 +19,124 @@ export default function LoginScreen() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-indigo-950 p-4">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col items-center mb-8 gap-3">
-          <div className="w-16 h-16 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg">
-            <ShoppingBag className="w-8 h-8 text-white" />
+    <div
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+      style={{ background: '#0F0810' }}
+    >
+      {/* Ambient pearl glow */}
+      <div
+        className="fixed inset-0 flex items-center justify-center pointer-events-none"
+        aria-hidden
+      >
+        <div
+          className="w-[700px] h-[700px] rounded-full"
+          style={{
+            background:
+              'radial-gradient(circle, rgba(219,39,119,0.13) 0%, rgba(219,39,119,0.04) 45%, transparent 70%)',
+          }}
+        />
+      </div>
+
+      <div className="w-full max-w-sm relative z-10">
+        {/* Brand mark */}
+        <div className="text-center mb-8">
+          <div
+            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-pink-600 mb-5"
+            style={{ boxShadow: '0 8px 40px rgba(219, 39, 119, 0.45)' }}
+          >
+            <span
+              className="text-white text-2xl leading-none select-none"
+              style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
+            >
+              PP
+            </span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Pink Pearl POS</h1>
-          <p className="text-slate-400 text-sm">Sign in to start your shift</p>
+          <h1
+            className="text-3xl text-white tracking-tight leading-none"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
+          >
+            Pink Pearl
+          </h1>
+          <p
+            className="text-pink-400/50 text-xs mt-2 tracking-[0.22em] uppercase"
+          >
+            Point of Sale
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-2xl space-y-4">
-          {error && (
-            <div className="bg-rose-50 text-rose-600 text-sm px-4 py-3 rounded-xl">{error}</div>
-          )}
+        {/* Form card */}
+        <div
+          className="bg-white rounded-3xl overflow-hidden"
+          style={{ boxShadow: '0 32px 80px rgba(0,0,0,0.55)' }}
+        >
+          {/* Thin pink top stripe */}
+          <div className="h-1 w-full bg-gradient-to-r from-pink-500 via-pink-400 to-rose-400" />
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-9 pr-3 py-3 rounded-xl border border-slate-200 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-                placeholder="you@example.com"
-                autoComplete="email"
-                required
-              />
+          <form onSubmit={handleSubmit} className="p-7 space-y-4">
+            {error && (
+              <div className="bg-rose-50 border border-rose-100 text-rose-600 text-sm px-4 py-2.5 rounded-2xl">
+                {error}
+              </div>
+            )}
+
+            <div>
+              <label className="block text-[10px] font-semibold text-slate-400 mb-2 uppercase tracking-[0.15em]">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-10 pr-3.5 py-3.5 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300 transition bg-slate-50/60"
+                  placeholder="you@pinkpearl.com"
+                  autoComplete="email"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type={showPw ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-12 py-3 rounded-xl border border-slate-200 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
-                placeholder="••••••••"
-                autoComplete="current-password"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-slate-400"
-                tabIndex={-1}
-              >
-                {showPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
+            <div>
+              <label className="block text-[10px] font-semibold text-slate-400 mb-2 uppercase tracking-[0.15em]">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full pl-10 pr-12 py-3.5 rounded-2xl border border-slate-200 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300 transition bg-slate-50/60"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw((v) => !v)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1 text-slate-300 hover:text-slate-500 transition"
+                  tabIndex={-1}
+                >
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold rounded-xl transition text-base flex items-center justify-center gap-2 disabled:opacity-60"
-          >
-            {loading ? <LoaderCircle className="w-5 h-5 animate-spin" /> : 'Sign In'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full mt-2 py-4 bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white font-semibold rounded-2xl transition text-sm tracking-wide flex items-center justify-center gap-2 disabled:opacity-60"
+              style={{ boxShadow: '0 4px 20px rgba(219, 39, 119, 0.35)' }}
+            >
+              {loading ? <LoaderCircle className="w-5 h-5 animate-spin" /> : 'Sign In'}
+            </button>
+          </form>
+        </div>
+
+        <p className="text-center text-white/20 text-xs mt-6 tracking-wide">
+          Pink Pearl Stores · Staff Portal
+        </p>
       </div>
     </div>
   );

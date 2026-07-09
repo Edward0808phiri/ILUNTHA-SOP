@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { TrendingUp, ShoppingCart, Package, AlertTriangle } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
 import type { Settings } from '../../lib/types';
@@ -33,12 +33,12 @@ export default function OverviewTab({ settings }: Props) {
 
   const cards = [
     { label: "Today's Revenue", value: `${cs}${stats.revenue.toFixed(2)}`, icon: TrendingUp, color: 'text-emerald-600 bg-emerald-50' },
-    { label: "Today's Sales",   value: stats.sales,                        icon: ShoppingCart, color: 'text-indigo-600 bg-indigo-50' },
+    { label: "Today's Sales",   value: stats.sales,                        icon: ShoppingCart, color: 'text-pink-600 bg-pink-50' },
     { label: 'Active Products', value: stats.products,                     icon: Package,      color: 'text-violet-600 bg-violet-50' },
     { label: 'Low Stock Items', value: stats.lowStock,                     icon: AlertTriangle, color: 'text-amber-600 bg-amber-50' },
   ];
 
-  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -54,3 +54,4 @@ export default function OverviewTab({ settings }: Props) {
     </div>
   );
 }
+

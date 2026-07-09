@@ -6,6 +6,19 @@
 }
 
 body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overscroll-behavior: none;
   user-select: none;
+  background-color: #FAF5F7;
 }
+
+input, textarea {
+  user-select: text;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(219, 39, 119, 0.2); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(219, 39, 119, 0.4); }

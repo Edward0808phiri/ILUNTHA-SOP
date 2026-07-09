@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿﻿import { useEffect, useState } from 'react';
 import { Search, Plus, Pencil } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
 import Modal, { Field, inputCls } from './Modal';
@@ -45,16 +45,16 @@ export default function CustomersTab() {
     return `${c.first_name} ${c.last_name}`.toLowerCase().includes(q) || c.phone?.includes(q) || c.email?.toLowerCase().includes(q);
   });
 
-  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search customers…" className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+          <input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search customers..." className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition">
+        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-xl hover:bg-pink-700 transition">
           <Plus className="w-4 h-4" /> Add Customer
         </button>
       </div>
@@ -72,11 +72,11 @@ export default function CustomersTab() {
             {filtered.map(c => (
               <tr key={c.id} className="border-b border-slate-50 last:border-0">
                 <td className="px-4 py-3 font-medium text-slate-800">{c.first_name} {c.last_name}</td>
-                <td className="px-4 py-3 text-slate-500">{c.phone ?? '—'}</td>
-                <td className="px-4 py-3 text-slate-500">{c.email ?? '—'}</td>
+                <td className="px-4 py-3 text-slate-500">{c.phone ?? 'â€”'}</td>
+                <td className="px-4 py-3 text-slate-500">{c.email ?? 'â€”'}</td>
                 <td className="px-4 py-3 text-right text-slate-700">{c.number_of_buys}</td>
-                <td className="px-4 py-3 text-right text-indigo-600 font-medium">{c.loyalty_points}</td>
-                <td className="px-4 py-3 text-right"><button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600"><Pencil className="w-4 h-4" /></button></td>
+                <td className="px-4 py-3 text-right text-pink-600 font-medium">{c.loyalty_points}</td>
+                <td className="px-4 py-3 text-right"><button onClick={() => openEdit(c)} className="p-1.5 rounded-lg hover:bg-pink-50 text-slate-400 hover:text-pink-600"><Pencil className="w-4 h-4" /></button></td>
               </tr>
             ))}
             {filtered.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-400">No customers found</td></tr>}
@@ -96,7 +96,7 @@ export default function CustomersTab() {
             <Field label="Email"><input type="email" className={inputCls} value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))} /></Field>
             <div className="flex gap-2 pt-2">
               <button onClick={() => setModal(null)} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium">Cancel</button>
-              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium disabled:opacity-60">{saving ? 'Saving…' : 'Save'}</button>
+              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-medium disabled:opacity-60">{saving ? 'Saving...' : 'Save'}</button>
             </div>
           </div>
         </Modal>
@@ -104,3 +104,4 @@ export default function CustomersTab() {
     </div>
   );
 }
+

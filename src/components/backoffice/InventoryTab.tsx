@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿﻿import { useEffect, useState } from 'react';
 import { Search, AlertTriangle, Plus, Minus } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
 
@@ -59,13 +59,13 @@ export default function InventoryTab({ currencySymbol: _cs }: Props) {
           type="search"
           value={search}
           onChange={e => setSearch(e.target.value)}
-          placeholder="Search products…"
-          className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+          placeholder="Search products..."
+          className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
         />
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>
+        <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div>
       ) : (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <table className="w-full text-sm">
@@ -86,10 +86,10 @@ export default function InventoryTab({ currencySymbol: _cs }: Props) {
                   <tr key={row.product_id} className="border-b border-slate-50 last:border-0">
                     <td className="px-4 py-3 font-medium text-slate-800 flex items-center gap-2">
                       {isLow && <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />}
-                      {row.products?.name ?? '—'}
+                      {row.products?.name ?? 'â€”'}
                     </td>
-                    <td className="px-4 py-3 text-slate-500">{row.products?.sku ?? '—'}</td>
-                    <td className="px-4 py-3 text-slate-500">{row.products?.category?.name ?? '—'}</td>
+                    <td className="px-4 py-3 text-slate-500">{row.products?.sku ?? 'â€”'}</td>
+                    <td className="px-4 py-3 text-slate-500">{row.products?.category?.name ?? 'â€”'}</td>
                     <td className={`px-4 py-3 text-right font-bold ${isLow ? 'text-amber-600' : 'text-slate-800'}`}>
                       {row.quantity}
                     </td>
@@ -100,14 +100,14 @@ export default function InventoryTab({ currencySymbol: _cs }: Props) {
                           <button onClick={() => setAdjusting(a => a ? { ...a, qty: a.qty - 1 } : a)} className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center"><Minus className="w-3.5 h-3.5" /></button>
                           <span className="w-10 text-center font-semibold">{adjusting.qty}</span>
                           <button onClick={() => setAdjusting(a => a ? { ...a, qty: a.qty + 1 } : a)} className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center"><Plus className="w-3.5 h-3.5" /></button>
-                          <button onClick={() => applyAdjust(row.product_id, adjusting.qty)} className="ml-1 px-3 py-1 bg-indigo-600 text-white text-xs rounded-lg">Save</button>
+                          <button onClick={() => applyAdjust(row.product_id, adjusting.qty)} className="ml-1 px-3 py-1 bg-pink-600 text-white text-xs rounded-lg">Save</button>
                           <button onClick={() => setAdjusting(null)} className="px-2 py-1 text-slate-400 text-xs">Cancel</button>
                         </div>
                       ) : (
                         <div className="flex justify-center">
                           <button
                             onClick={() => setAdjusting({ id: row.product_id, qty: row.quantity })}
-                            className="px-3 py-1 text-xs bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 rounded-lg transition"
+                            className="px-3 py-1 text-xs bg-slate-100 hover:bg-pink-50 hover:text-pink-600 rounded-lg transition"
                           >
                             Adjust
                           </button>
@@ -127,3 +127,4 @@ export default function InventoryTab({ currencySymbol: _cs }: Props) {
     </div>
   );
 }
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿﻿import { useEffect, useState } from 'react';
 import { Plus, Pencil, Search } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
 import Modal, { Field, inputCls } from './Modal';
@@ -46,13 +46,13 @@ export default function ServicesTab({ currencySymbol }: { currencySymbol: string
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search services…" className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+          <input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search services..." className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition">
+        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-xl hover:bg-pink-700 transition">
           <Plus className="w-4 h-4" /> Add Service
         </button>
       </div>
-      {loading ? <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div> : (
+      {loading ? <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div> : (
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-slate-100 text-slate-500 text-left">
@@ -66,10 +66,10 @@ export default function ServicesTab({ currencySymbol }: { currencySymbol: string
               {filtered.map(s => (
                 <tr key={s.id} className="border-b border-slate-50 last:border-0">
                   <td className="px-4 py-3 font-medium text-slate-800">{s.name}</td>
-                  <td className="px-4 py-3 text-slate-500">{s.description ?? '—'}</td>
+                  <td className="px-4 py-3 text-slate-500">{s.description ?? 'â€”'}</td>
                   <td className="px-4 py-3 text-right font-semibold text-slate-800">{currencySymbol}{Number(s.price).toFixed(2)}</td>
                   <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${s.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{s.is_active ? 'Active' : 'Inactive'}</span></td>
-                  <td className="px-4 py-3 text-right"><button onClick={() => openEdit(s)} className="p-1.5 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600"><Pencil className="w-4 h-4" /></button></td>
+                  <td className="px-4 py-3 text-right"><button onClick={() => openEdit(s)} className="p-1.5 rounded-lg hover:bg-pink-50 text-slate-400 hover:text-pink-600"><Pencil className="w-4 h-4" /></button></td>
                 </tr>
               ))}
               {filtered.length === 0 && <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-400">No services found</td></tr>}
@@ -92,7 +92,7 @@ export default function ServicesTab({ currencySymbol }: { currencySymbol: string
             </Field>
             <div className="flex gap-2 pt-2">
               <button onClick={() => setModal(null)} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium">Cancel</button>
-              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium disabled:opacity-60">{saving ? 'Saving…' : 'Save'}</button>
+              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-medium disabled:opacity-60">{saving ? 'Saving...' : 'Save'}</button>
             </div>
           </div>
         </Modal>
@@ -100,3 +100,4 @@ export default function ServicesTab({ currencySymbol }: { currencySymbol: string
     </div>
   );
 }
+

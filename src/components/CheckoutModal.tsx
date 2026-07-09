@@ -35,7 +35,6 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
     try {
       const now = new Date().toISOString();
 
-      // Generate invoice number via a counter select-then-update approach
       const { data: counter } = await supabase
         .from('invoice_counters')
         .select('last_number')
@@ -46,14 +45,12 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
       const nextNum = (counter?.last_number ?? 0) + 1;
       const invoiceNumber = `INV-${String(nextNum).padStart(6, '0')}`;
 
-      // Upsert counter
       await supabase.from('invoice_counters').upsert({
         business_id: BUSINESS_ID,
         company_id: COMPANY_ID,
         last_number: nextNum,
       });
 
-      // Insert sale
       const { data: sale, error: saleErr } = await supabase
         .from('sales')
         .insert({
@@ -73,7 +70,6 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
 
       if (saleErr || !sale) throw new Error(saleErr?.message || 'Failed to create sale');
 
-      // Insert sale items
       const saleItems = cart.map((item) => ({
         business_id: BUSINESS_ID,
         company_id: COMPANY_ID,
@@ -92,7 +88,6 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
 
       await supabase.from('sale_items').insert(saleItems);
 
-      // Insert payment
       await supabase.from('payments').insert({
         business_id: BUSINESS_ID,
         company_id: COMPANY_ID,
@@ -104,7 +99,6 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
         created_at: now,
       });
 
-      // Decrement inventory for product items (non-fatal if RPC not set up yet)
       const productItems = cart.filter((i) => i.type === 'product');
       for (const item of productItems) {
         try {
@@ -129,15 +123,25 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
     return (
       <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
         <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
-          <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-900 mb-1">Sale Complete</h2>
+          <div className="w-20 h-20 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-5">
+            <CheckCircle className="w-10 h-10 text-emerald-500" />
+          </div>
+          <h2
+            className="text-2xl text-slate-900 mb-1"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
+          >
+            Sale Complete
+          </h2>
           {method === 'cash' && change > 0 && (
-            <p className="text-slate-600 text-lg mb-1">Change: <strong className="text-slate-900">{cs}{change.toFixed(2)}</strong></p>
+            <p className="text-slate-500 text-base mb-1">
+              Change: <strong className="text-slate-900">{cs}{change.toFixed(2)}</strong>
+            </p>
           )}
-          <p className="text-slate-500 text-sm mb-6">Total: {cs}{total.toFixed(2)}</p>
+          <p className="text-slate-400 text-sm mb-7">Total paid: {cs}{total.toFixed(2)}</p>
           <button
             onClick={onClose}
-            className="w-full py-3.5 bg-indigo-600 text-white font-bold rounded-xl text-base"
+            className="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-2xl text-base transition"
+            style={{ boxShadow: '0 4px 16px rgba(219,39,119,0.3)' }}
           >
             New Sale
           </button>
@@ -147,36 +151,49 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-end sm:items-center justify-center">
+    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
       <div className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        {/* Pink top accent */}
+        <div className="h-1 w-full bg-gradient-to-r from-pink-500 via-pink-400 to-rose-400 sm:rounded-t-3xl" />
+
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <h2 className="text-xl font-bold text-slate-900">Checkout</h2>
-          <button onClick={onClose} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100">
+          <h2
+            className="text-xl text-slate-900"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}
+          >
+            Checkout
+          </h2>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 transition"
+          >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="px-5 space-y-1 pb-3 border-b border-slate-100">
+        {/* Order summary */}
+        <div className="px-5 space-y-1.5 pb-4 border-b border-slate-100">
           {cart.map((item) => (
             <div key={`${item.type}-${item.id}`} className="flex justify-between text-sm">
-              <span className="text-slate-600">{item.name} × {item.quantity}</span>
-              <span className="text-slate-800 font-medium">{cs}{(item.price * item.quantity).toFixed(2)}</span>
+              <span className="text-slate-500">{item.name} × {item.quantity}</span>
+              <span className="text-slate-700 font-semibold">{cs}{(item.price * item.quantity).toFixed(2)}</span>
             </div>
           ))}
           {settings.tax_rate > 0 && (
-            <div className="flex justify-between text-sm pt-1 border-t border-slate-100 mt-1">
-              <span className="text-slate-500">Tax ({settings.tax_rate}%)</span>
-              <span className="text-slate-600">{cs}{tax.toFixed(2)}</span>
+            <div className="flex justify-between text-sm pt-1.5 border-t border-slate-100 mt-1">
+              <span className="text-slate-400">Tax ({settings.tax_rate}%)</span>
+              <span className="text-slate-500">{cs}{tax.toFixed(2)}</span>
             </div>
           )}
           <div className="flex justify-between font-bold text-xl pt-2">
-            <span>Total</span>
-            <span className="text-indigo-600">{cs}{total.toFixed(2)}</span>
+            <span className="text-slate-900">Total</span>
+            <span className="text-pink-600">{cs}{total.toFixed(2)}</span>
           </div>
         </div>
 
+        {/* Payment method */}
         <div className="px-5 pt-4 pb-2">
-          <p className="text-sm font-medium text-slate-700 mb-2">Payment method</p>
+          <p className="text-xs font-semibold text-slate-400 mb-3 uppercase tracking-wider">Payment method</p>
           <div className="grid grid-cols-3 gap-2">
             {([
               { key: 'cash', label: 'Cash', icon: Banknote },
@@ -186,7 +203,11 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
               <button
                 key={key}
                 onClick={() => setMethod(key)}
-                className={`flex flex-col items-center gap-1.5 py-3 rounded-xl text-sm font-medium transition border-2 ${method === key ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600'}`}
+                className={`flex flex-col items-center gap-2 py-3.5 rounded-2xl text-sm font-semibold transition border-2 ${
+                  method === key
+                    ? 'border-pink-500 bg-pink-50 text-pink-700'
+                    : 'border-slate-100 text-slate-500 hover:border-pink-200 hover:bg-pink-50/30'
+                }`}
               >
                 <Icon className="w-5 h-5" />
                 {label}
@@ -195,34 +216,39 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
           </div>
         </div>
 
+        {/* Cash tendered */}
         {method === 'cash' && (
           <div className="px-5 pt-2 pb-3">
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">Amount tendered</label>
+            <label className="block text-xs font-semibold text-slate-400 mb-2 uppercase tracking-wider">
+              Amount tendered
+            </label>
             <input
               type="number"
               inputMode="decimal"
               value={tendered}
               onChange={(e) => setTendered(e.target.value)}
               placeholder={`${cs}${total.toFixed(2)}`}
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300 transition"
             />
             {tenderedNum >= total && (
-              <div className="mt-2 text-center text-slate-600">
-                Change: <strong className="text-slate-900 text-lg">{cs}{change.toFixed(2)}</strong>
+              <div className="mt-2.5 bg-emerald-50 rounded-xl px-4 py-2.5 text-center">
+                <span className="text-slate-500 text-sm">Change: </span>
+                <strong className="text-emerald-700 text-lg">{cs}{change.toFixed(2)}</strong>
               </div>
             )}
           </div>
         )}
 
         {error && (
-          <div className="mx-5 mb-3 bg-rose-50 text-rose-600 text-sm px-4 py-3 rounded-xl">{error}</div>
+          <div className="mx-5 mb-3 bg-rose-50 text-rose-600 text-sm px-4 py-3 rounded-2xl">{error}</div>
         )}
 
-        <div className="px-5 pb-6 pt-2">
+        <div className="px-5 pb-7 pt-2">
           <button
             onClick={handleCharge}
             disabled={loading || !canCharge}
-            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold rounded-xl text-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-4 bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white font-bold rounded-2xl text-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+            style={{ boxShadow: '0 4px 20px rgba(219,39,119,0.3)' }}
           >
             {loading ? <LoaderCircle className="w-5 h-5 animate-spin" /> : `Charge ${cs}${total.toFixed(2)}`}
           </button>

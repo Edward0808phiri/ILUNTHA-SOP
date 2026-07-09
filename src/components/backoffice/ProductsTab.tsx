@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿﻿import { useEffect, useState } from 'react';
 import { Plus, Pencil, Search, Archive } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
 import Modal, { Field, inputCls, selectCls } from './Modal';
@@ -79,14 +79,14 @@ export default function ProductsTab({ currencySymbol }: { currencySymbol: string
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products…" className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+          <input type="search" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..." className="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
         </div>
-        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition">
+        <button onClick={openAdd} className="flex items-center gap-2 px-4 py-2.5 bg-pink-600 text-white text-sm font-medium rounded-xl hover:bg-pink-700 transition">
           <Plus className="w-4 h-4" /> Add Product
         </button>
       </div>
 
-      {loading ? <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div> : (
+      {loading ? <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div> : (
         <div className="bg-white rounded-2xl shadow-sm overflow-x-auto">
           <table className="w-full text-sm">
             <thead><tr className="border-b border-slate-100 text-slate-500 text-left">
@@ -103,12 +103,12 @@ export default function ProductsTab({ currencySymbol }: { currencySymbol: string
                 <tr key={p.id} className="border-b border-slate-50 last:border-0">
                   <td className="px-4 py-3 font-medium text-slate-800">{p.name}</td>
                   <td className="px-4 py-3 text-slate-500">{p.sku}</td>
-                  <td className="px-4 py-3 text-slate-500">{p.category?.name ?? '—'}</td>
+                  <td className="px-4 py-3 text-slate-500">{p.category?.name ?? 'â€”'}</td>
                   <td className="px-4 py-3 text-right font-semibold text-slate-800">{currencySymbol}{Number(p.price).toFixed(2)}</td>
                   <td className="px-4 py-3 text-right text-slate-500">{currencySymbol}{Number(p.cost).toFixed(2)}</td>
                   <td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium ${p.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{p.status}</span></td>
                   <td className="px-4 py-3 flex items-center gap-1 justify-end">
-                    <button onClick={() => openEdit(p)} className="p-1.5 rounded-lg hover:bg-indigo-50 text-slate-400 hover:text-indigo-600"><Pencil className="w-4 h-4" /></button>
+                    <button onClick={() => openEdit(p)} className="p-1.5 rounded-lg hover:bg-pink-50 text-slate-400 hover:text-pink-600"><Pencil className="w-4 h-4" /></button>
                     {p.status === 'active' && <button onClick={() => archive(p.id)} className="p-1.5 rounded-lg hover:bg-rose-50 text-slate-400 hover:text-rose-500"><Archive className="w-4 h-4" /></button>}
                   </td>
                 </tr>
@@ -148,8 +148,8 @@ export default function ProductsTab({ currencySymbol }: { currencySymbol: string
             </Field>
             <div className="flex gap-2 pt-2">
               <button onClick={() => setModal(null)} className="flex-1 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-medium">Cancel</button>
-              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-medium disabled:opacity-60">
-                {saving ? 'Saving…' : 'Save'}
+              <button onClick={save} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-pink-600 text-white text-sm font-medium disabled:opacity-60">
+                {saving ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>
@@ -158,3 +158,4 @@ export default function ProductsTab({ currencySymbol }: { currencySymbol: string
     </div>
   );
 }
+

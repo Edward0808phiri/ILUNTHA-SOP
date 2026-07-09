@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { supabase, BUSINESS_ID } from '../../lib/supabase';
 
 interface Emp {
@@ -28,12 +28,12 @@ export default function EmployeesTab() {
   }, []);
 
   const roleColor: Record<string, string> = {
-    Admin: 'bg-indigo-100 text-indigo-700',
+    Admin: 'bg-pink-100 text-pink-700',
     Supervisor: 'bg-violet-100 text-violet-700',
     Cashier: 'bg-slate-100 text-slate-600',
   };
 
-  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-indigo-400 border-t-transparent rounded-full animate-spin" /></div>;
+  if (loading) return <div className="flex items-center justify-center h-48"><div className="w-8 h-8 border-4 border-pink-400 border-t-transparent rounded-full animate-spin" /></div>;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
@@ -69,3 +69,4 @@ export default function EmployeesTab() {
     </div>
   );
 }
+
