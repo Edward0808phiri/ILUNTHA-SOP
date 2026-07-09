@@ -45,6 +45,7 @@ export default function App() {
         const s = await loadSettings();
         setEmployee(emp);
         setSettings(s);
+        recordSessionStart(emp, s.branch_name);
       }
     });
     return () => subscription.unsubscribe();
@@ -80,6 +81,30 @@ export default function App() {
       onOpenBackOffice={employee.role !== 'Cashier' ? () => setView('backoffice') : undefined}
     />
   );
+}
+
+async function recordSessionStart(emp: Employee, branchName: string) {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  // Only insert if no session_start event yet today for this branch
+  const { data } = await supabase
+    .from('events')
+    .select('id')
+    .eq('business_id', BUSINESS_ID)
+    .eq('action', 'pos.session_start')
+    .gte('created_at', todayStart.toISOString())
+    .maybeSingle();
+  if (!data) {
+    await supabase.from('events').insert({
+      business_id: BUSINESS_ID,
+      company_id: COMPANY_ID,
+      action: 'pos.session_start',
+      actor_id: emp.id,
+      actor_name: `${emp.first_name} ${emp.last_name}`.trim(),
+      actor_role: emp.role,
+      detail_json: { branch_name: branchName },
+    });
+  }
 }
 
 function buildEmployee(user: { id: string; email?: string; user_metadata?: Record<string, unknown> }): Employee {
