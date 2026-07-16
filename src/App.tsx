@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase, BUSINESS_ID, COMPANY_ID, setActiveIds } from './lib/supabase';
+import { supabase, setActiveIds } from './lib/supabase';
 import type { Employee, Settings } from './lib/types';
 import LoginScreen from './components/LoginScreen';
 import PosScreen from './components/PosScreen';
@@ -7,12 +7,11 @@ import BackOffice from './components/BackOffice';
 
 const SESSION_KEY = 'cs_pos_employee';
 
-async function loadSettings(): Promise<Settings> {
+async function loadSettings(businessId: string): Promise<Settings> {
   const { data } = await supabase
     .from('settings')
     .select('store_name, branch_name, currency_symbol, tax_rate')
-    .eq('business_id', BUSINESS_ID)
-    .eq('company_id', COMPANY_ID)
+    .eq('business_id', businessId)
     .single();
   return (data as Settings | null) ?? {
     store_name: 'CleanSkinZm',
@@ -28,14 +27,15 @@ async function recordSessionStart(emp: Employee, branchName: string) {
   const { data } = await supabase
     .from('audit_logs')
     .select('id')
-    .eq('business_id', BUSINESS_ID)
+    .eq('business_id', emp.business_id)
     .eq('action', 'pos.session_start')
     .gte('created_at', todayStart.toISOString())
     .maybeSingle();
+
   if (!data) {
     await supabase.from('audit_logs').insert({
-      business_id: BUSINESS_ID,
-      company_id: COMPANY_ID,
+      business_id: emp.business_id,
+      company_id: emp.company_id,
       action: 'pos.session_start',
       detail_json: {
         branch_name: branchName,

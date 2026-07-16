@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp, ShoppingCart, Package, AlertTriangle, Clock, CalendarCheck } from 'lucide-react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
+import { supabase, BUSINESS_ID } from '../../lib/supabase';
 import type { Settings } from '../../lib/types';
 
 interface Props { settings: Settings; }
@@ -28,7 +28,6 @@ export default function OverviewTab({ settings }: Props) {
         supabase.from('audit_logs')
           .select('created_at, detail_json')
           .eq('business_id', BUSINESS_ID)
-          .eq('company_id', COMPANY_ID)
           .eq('action', 'pos.session_start')
           .gte('created_at', today.toISOString())
           .order('created_at', { ascending: true })
