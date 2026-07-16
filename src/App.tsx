@@ -57,9 +57,10 @@ export default function App() {
     if (saved) {
       try {
         const emp: Employee = JSON.parse(saved);
-        if (emp.business_id) setActiveIds(emp.business_id, emp.company_id);
+        if (!emp.business_id) { localStorage.removeItem(SESSION_KEY); setBooting(false); return; }
+        setActiveIds(emp.business_id, emp.company_id);
         setEmployee(emp);
-        loadSettings().then(setSettings);
+        loadSettings(emp.business_id).then(setSettings);
       } catch {
         localStorage.removeItem(SESSION_KEY);
       }
@@ -69,7 +70,7 @@ export default function App() {
 
   async function handleLogin(emp: Employee) {
     setActiveIds(emp.business_id, emp.company_id);
-    const s = await loadSettings();
+    const s = await loadSettings(emp.business_id);
     localStorage.setItem(SESSION_KEY, JSON.stringify(emp));
     setEmployee(emp);
     setSettings(s);
