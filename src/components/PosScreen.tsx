@@ -31,13 +31,26 @@ export default function PosScreen({ employee, settings, onLogout, onOpenBackOffi
   const [tabView, setTabView] = useState<TabView>('products');
   const [checkoutOpen, setCheckoutOpen] = useState(false);
   const [loadingItems, setLoadingItems] = useState(true);
+  const [stockMap, setStockMap] = useState<Record<string, number>>({});
 
   const cs = settings.currency_symbol;
+
+  const refreshStock = useCallback(async () => {
+    const { data } = await supabase
+      .from('inventory')
+      .select('product_id, quantity')
+      .eq('business_id', BUSINESS_ID);
+    if (data) {
+      const map: Record<string, number> = {};
+      for (const row of data) map[row.product_id] = row.quantity;
+      setStockMap(map);
+    }
+  }, []);
 
   useEffect(() => {
     async function load() {
       setLoadingItems(true);
-      const [prodRes, svcRes, catRes] = await Promise.all([
+      const [prodRes, svcRes, catRes, invRes] = await Promise.all([
         supabase
           .from('products')
           .select('id, name, sku, price, color_hex, image_url, status, category_id, category:categories(name)')
@@ -55,22 +68,37 @@ export default function PosScreen({ employee, settings, onLogout, onOpenBackOffi
           .select('id, name, sort_order')
           .eq('business_id', BUSINESS_ID)
           .order('sort_order'),
+        supabase
+          .from('inventory')
+          .select('product_id, quantity')
+          .eq('business_id', BUSINESS_ID),
       ]);
       if (prodRes.data) setProducts(prodRes.data as unknown as Product[]);
       if (svcRes.data) setServices(svcRes.data as Service[]);
       if (catRes.data) setCategories(catRes.data as Category[]);
+      if (invRes.data) {
+        const map: Record<string, number> = {};
+        for (const row of invRes.data) map[row.product_id] = row.quantity;
+        setStockMap(map);
+      }
       setLoadingItems(false);
     }
     load();
   }, []);
 
   const addProduct = useCallback((p: Product) => {
+    const available = stockMap[p.id] ?? Infinity;
+    if (available === 0) return;
     setCart((prev) => {
       const idx = prev.findIndex((i) => i.type === 'product' && i.id === p.id);
-      if (idx >= 0) return prev.map((i, n) => n === idx ? { ...i, quantity: i.quantity + 1 } : i);
+      if (idx >= 0) {
+        const current = prev[idx].quantity;
+        if (current >= available) return prev;
+        return prev.map((i, n) => n === idx ? { ...i, quantity: i.quantity + 1 } : i);
+      }
       return [...prev, { type: 'product', id: p.id, name: p.name, price: Number(p.price), quantity: 1, cost: 0 }];
     });
-  }, []);
+  }, [stockMap]);
 
   const addService = useCallback((s: Service) => {
     setCart((prev) => {
@@ -203,12 +231,13 @@ export default function PosScreen({ employee, settings, onLogout, onOpenBackOffi
                     <button
                       key={p.id}
                       onClick={() => addProduct(p)}
-                      className="bg-white rounded-2xl p-3 text-left shadow-sm active:scale-95 transition-all hover:shadow-md border border-slate-100 group"
-                      onMouseEnter={e => (e.currentTarget.style.borderColor = BLUE_LIGHT)}
+                      disabled={(stockMap[p.id] ?? Infinity) === 0}
+                      className="bg-white rounded-2xl p-3 text-left shadow-sm transition-all border border-slate-100 group disabled:opacity-50 disabled:cursor-not-allowed active:not-disabled:scale-95 hover:not-disabled:shadow-md"
+                      onMouseEnter={e => { if ((stockMap[p.id] ?? 1) > 0) e.currentTarget.style.borderColor = BLUE_LIGHT; }}
                       onMouseLeave={e => (e.currentTarget.style.borderColor = '#f1f5f9')}
                     >
                       <div
-                        className="w-full aspect-square rounded-xl mb-2.5 flex items-center justify-center overflow-hidden"
+                        className="w-full aspect-square rounded-xl mb-2.5 flex items-center justify-center overflow-hidden relative"
                         style={{ backgroundColor: p.color_hex || BLUE }}
                       >
                         {p.image_url ? (
@@ -218,6 +247,24 @@ export default function PosScreen({ employee, settings, onLogout, onOpenBackOffi
                             {p.name.charAt(0).toUpperCase()}
                           </span>
                         )}
+                        {/* Stock badge */}
+                        {(() => {
+                          const qty = stockMap[p.id] ?? null;
+                          if (qty === null) return null;
+                          const isLow = qty <= 5;
+                          const isOut = qty === 0;
+                          return (
+                            <span
+                              className="absolute top-1.5 right-1.5 text-[10px] font-bold px-1.5 py-0.5 rounded-lg leading-none"
+                              style={{
+                                background: isOut ? '#ef4444' : isLow ? '#F59E0B' : 'rgba(0,0,0,0.45)',
+                                color: 'white',
+                              }}
+                            >
+                              {isOut ? 'Out' : qty}
+                            </span>
+                          );
+                        })()}
                       </div>
                       <div className="font-semibold text-slate-800 text-sm leading-tight line-clamp-2">{p.name}</div>
                       <div className="font-bold text-sm mt-1" style={{ color: ORANGE }}>
@@ -288,6 +335,7 @@ export default function PosScreen({ employee, settings, onLogout, onOpenBackOffi
           employee={employee}
           settings={settings}
           onClose={() => setCheckoutOpen(false)}
+          onStockUpdated={refreshStock}
         />
       )}
     </div>

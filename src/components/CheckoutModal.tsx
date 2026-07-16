@@ -9,11 +9,12 @@ interface Props {
   employee: Employee;
   settings: Settings;
   onClose: () => void;
+  onStockUpdated?: () => void;
 }
 
 type PayMethod = 'cash' | 'card' | 'mobile_money';
 
-export default function CheckoutModal({ cart, setCart, employee, settings, onClose }: Props) {
+export default function CheckoutModal({ cart, setCart, employee, settings, onClose, onStockUpdated }: Props) {
   const cs = settings.currency_symbol;
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const tax = subtotal * (settings.tax_rate / 100);
@@ -101,18 +102,24 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
 
       const productItems = cart.filter((i) => i.type === 'product');
       for (const item of productItems) {
-        try {
-          await supabase.rpc('adjust_inventory', {
-            p_business_id: BUSINESS_ID,
-            p_company_id: COMPANY_ID,
-            p_product_id: item.id,
-            p_qty_delta: -item.quantity,
-          });
-        } catch { /* ignore */ }
+        const { data: inv } = await supabase
+          .from('inventory')
+          .select('quantity')
+          .eq('product_id', item.id)
+          .eq('business_id', BUSINESS_ID)
+          .single();
+        if (inv) {
+          await supabase
+            .from('inventory')
+            .update({ quantity: Math.max(0, inv.quantity - item.quantity) })
+            .eq('product_id', item.id)
+            .eq('business_id', BUSINESS_ID);
+        }
       }
 
       setDone(true);
       setCart([]);
+      onStockUpdated?.();
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : 'Sale failed. Please try again.');
     }
