@@ -140,8 +140,8 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
           <p className="text-slate-400 text-sm mb-7">Total paid: {cs}{total.toFixed(2)}</p>
           <button
             onClick={onClose}
-            className="w-full py-4 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-2xl text-base transition"
-            style={{ boxShadow: '0 4px 16px rgba(219,39,119,0.3)' }}
+            className="w-full py-4 bg-[#6AAEC8] hover:bg-[#4E96B0] text-white font-bold rounded-2xl text-base transition"
+            style={{ boxShadow: '0 4px 16px rgba(106,174,200,0.35)' }}
           >
             New Sale
           </button>
@@ -153,8 +153,8 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center">
       <div className="bg-white w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
-        {/* Pink top accent */}
-        <div className="h-1 w-full bg-gradient-to-r from-pink-500 via-pink-400 to-rose-400 sm:rounded-t-3xl" />
+        {/* Top accent */}
+        <div className="h-1 w-full sm:rounded-t-3xl" style={{ background: 'linear-gradient(to right, #6AAEC8, #C47840, #EDD870)' }} />
 
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
           <h2
@@ -187,7 +187,7 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
           )}
           <div className="flex justify-between font-bold text-xl pt-2">
             <span className="text-slate-900">Total</span>
-            <span className="text-pink-600">{cs}{total.toFixed(2)}</span>
+            <span className="text-[#C47840]">{cs}{total.toFixed(2)}</span>
           </div>
         </div>
 
@@ -205,8 +205,8 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
                 onClick={() => setMethod(key)}
                 className={`flex flex-col items-center gap-2 py-3.5 rounded-2xl text-sm font-semibold transition border-2 ${
                   method === key
-                    ? 'border-pink-500 bg-pink-50 text-pink-700'
-                    : 'border-slate-100 text-slate-500 hover:border-pink-200 hover:bg-pink-50/30'
+                    ? 'border-[#6AAEC8] bg-[#D4EBF5] text-[#4E96B0]'
+                    : 'border-slate-100 text-slate-500 hover:border-[#6AAEC8] hover:bg-[#EFF6FA]'
                 }`}
               >
                 <Icon className="w-5 h-5" />
@@ -228,7 +228,7 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
               value={tendered}
               onChange={(e) => setTendered(e.target.value)}
               placeholder={`${cs}${total.toFixed(2)}`}
-              className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-pink-300 focus:border-pink-300 transition"
+              className="w-full px-4 py-3.5 rounded-2xl border border-slate-200 text-lg font-bold focus:outline-none focus:ring-2 focus:ring-[#6AAEC8] focus:border-[#6AAEC8] transition"
             />
             {tenderedNum >= total && (
               <div className="mt-2.5 bg-emerald-50 rounded-xl px-4 py-2.5 text-center">
@@ -247,8 +247,8 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
           <button
             onClick={handleCharge}
             disabled={loading || !canCharge}
-            className="w-full py-4 bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white font-bold rounded-2xl text-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
-            style={{ boxShadow: '0 4px 20px rgba(219,39,119,0.3)' }}
+            className="w-full py-4 bg-[#6AAEC8] hover:bg-[#4E96B0] active:bg-[#3D84A0] text-white font-bold rounded-2xl text-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+            style={{ boxShadow: '0 4px 20px rgba(106,174,200,0.35)' }}
           >
             {loading ? <LoaderCircle className="w-5 h-5 animate-spin" /> : `Charge ${cs}${total.toFixed(2)}`}
           </button>

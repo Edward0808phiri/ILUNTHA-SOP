@@ -9,6 +9,11 @@ interface Props {
   onCheckout: () => void;
 }
 
+const BLUE       = '#6AAEC8';
+const BLUE_DARK  = '#4E96B0';
+const BLUE_LIGHT = '#D4EBF5';
+const ORANGE     = '#C47840';
+
 export default function Cart({ cart, setCart, currencySymbol, taxRate, onCheckout }: Props) {
   const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
   const tax = subtotal * (taxRate / 100);
@@ -29,15 +34,15 @@ export default function Cart({ cart, setCart, currencySymbol, taxRate, onCheckou
   }
 
   return (
-    <div className="flex flex-col h-full bg-white border-l border-pink-100">
+    <div className="flex flex-col h-full border-l-4" style={{ background: '#F4F9FC', borderColor: BLUE }}>
       {/* Header */}
-      <div className="px-4 py-3.5 border-b border-slate-100 flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-pink-50 flex items-center justify-center">
-          <ShoppingCart className="w-4 h-4 text-pink-500" />
+      <div className="px-4 py-3.5 border-b flex items-center gap-2.5" style={{ borderColor: BLUE_LIGHT, background: 'white' }}>
+        <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ background: BLUE_LIGHT }}>
+          <ShoppingCart className="w-4 h-4" style={{ color: BLUE }} />
         </div>
         <span className="font-bold text-slate-800">Cart</span>
         {cart.length > 0 && (
-          <span className="ml-auto text-xs bg-pink-100 text-pink-700 font-bold px-2.5 py-0.5 rounded-full">
+          <span className="ml-auto text-xs font-bold px-2.5 py-0.5 rounded-full" style={{ background: BLUE_LIGHT, color: BLUE_DARK }}>
             {cart.reduce((s, i) => s + i.quantity, 0)}
           </span>
         )}
@@ -57,21 +62,25 @@ export default function Cart({ cart, setCart, currencySymbol, taxRate, onCheckou
               <div key={`${item.type}-${item.id}`} className="px-4 py-3 flex items-center gap-2.5">
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-semibold text-slate-800 truncate">{item.name}</div>
-                  <div className="text-sm text-pink-500 font-bold mt-0.5">
+                  <div className="text-sm font-bold mt-0.5" style={{ color: ORANGE }}>
                     {currencySymbol}{(item.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <button
                     onClick={() => adjust(idx, -1)}
-                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-pink-50 hover:text-pink-600 flex items-center justify-center transition text-slate-500"
+                    className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center transition text-slate-500"
+                    onMouseEnter={e => { e.currentTarget.style.background = BLUE_LIGHT; (e.currentTarget.querySelector('svg') as SVGElement).style.color = BLUE_DARK; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#f1f5f9'; (e.currentTarget.querySelector('svg') as SVGElement).style.color = '#64748b'; }}
                   >
                     <Minus className="w-3.5 h-3.5" />
                   </button>
                   <span className="w-7 text-center text-sm font-bold text-slate-800">{item.quantity}</span>
                   <button
                     onClick={() => adjust(idx, 1)}
-                    className="w-7 h-7 rounded-lg bg-slate-100 hover:bg-pink-50 hover:text-pink-600 flex items-center justify-center transition text-slate-500"
+                    className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center transition text-slate-500"
+                    onMouseEnter={e => { e.currentTarget.style.background = BLUE_LIGHT; (e.currentTarget.querySelector('svg') as SVGElement).style.color = BLUE_DARK; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#f1f5f9'; (e.currentTarget.querySelector('svg') as SVGElement).style.color = '#64748b'; }}
                   >
                     <Plus className="w-3.5 h-3.5" />
                   </button>
@@ -90,7 +99,7 @@ export default function Cart({ cart, setCart, currencySymbol, taxRate, onCheckou
 
       {/* Totals + charge */}
       {cart.length > 0 && (
-        <div className="border-t border-slate-100 p-4 space-y-1.5">
+        <div className="border-t p-4 space-y-1.5" style={{ borderColor: BLUE_LIGHT, background: 'white' }}>
           <div className="flex justify-between text-sm text-slate-400">
             <span>Subtotal</span>
             <span className="font-medium text-slate-600">{currencySymbol}{subtotal.toFixed(2)}</span>
@@ -103,12 +112,15 @@ export default function Cart({ cart, setCart, currencySymbol, taxRate, onCheckou
           )}
           <div className="flex justify-between font-bold text-xl text-slate-900 pt-1.5 border-t border-slate-100">
             <span>Total</span>
-            <span className="text-pink-600">{currencySymbol}{total.toFixed(2)}</span>
+            <span style={{ color: ORANGE }}>{currencySymbol}{total.toFixed(2)}</span>
           </div>
           <button
             onClick={onCheckout}
-            className="w-full mt-3 py-4 bg-pink-600 hover:bg-pink-700 active:bg-pink-800 text-white font-bold rounded-2xl transition text-base"
-            style={{ boxShadow: '0 4px 16px rgba(219,39,119,0.3)' }}
+            className="w-full mt-3 py-4 text-white font-bold rounded-2xl transition text-base"
+            style={{
+              background: `linear-gradient(135deg, ${BLUE} 0%, ${BLUE_DARK} 100%)`,
+              boxShadow: `0 4px 16px rgba(106,174,200,0.35)`,
+            }}
           >
             Charge {currencySymbol}{total.toFixed(2)}
           </button>

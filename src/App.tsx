@@ -5,6 +5,8 @@ import LoginScreen from './components/LoginScreen';
 import PosScreen from './components/PosScreen';
 import BackOffice from './components/BackOffice';
 
+const SESSION_KEY = 'cs_pos_employee';
+
 async function loadSettings(): Promise<Settings> {
   const { data } = await supabase
     .from('settings')
@@ -13,74 +15,11 @@ async function loadSettings(): Promise<Settings> {
     .eq('company_id', COMPANY_ID)
     .single();
   return (data as Settings | null) ?? {
-    store_name: 'Pink Pearl',
-    branch_name: 'Main Branch',
+    store_name: 'Clearskin',
+    branch_name: 'North Mead',
     currency_symbol: 'K',
     tax_rate: 0,
   };
-}
-
-export default function App() {
-  const [booting, setBooting] = useState(true);
-  const [employee, setEmployee] = useState<Employee | null>(null);
-  const [settings, setSettings] = useState<Settings | null>(null);
-  const [view, setView] = useState<'pos' | 'backoffice'>('pos');
-
-  useEffect(() => {
-    supabase.auth.getSession().then(async ({ data }) => {
-      const user = data.session?.user;
-      if (user) {
-        const emp = buildEmployee(user);
-        const s = await loadSettings();
-        setEmployee(emp);
-        setSettings(s);
-      }
-      setBooting(false);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_OUT') { setEmployee(null); setSettings(null); }
-      if (event === 'SIGNED_IN' && session?.user) {
-        const emp = buildEmployee(session.user);
-        const s = await loadSettings();
-        setEmployee(emp);
-        setSettings(s);
-        recordSessionStart(emp, s.branch_name);
-      }
-    });
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (booting) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (!employee || !settings) {
-    return <LoginScreen />;
-  }
-
-  if (view === 'backoffice') {
-    return (
-      <BackOffice
-        employee={employee}
-        settings={settings}
-        onClose={() => setView('pos')}
-      />
-    );
-  }
-
-  return (
-    <PosScreen
-      employee={employee}
-      settings={settings}
-      onLogout={() => supabase.auth.signOut()}
-      onOpenBackOffice={employee.role !== 'Cashier' ? () => setView('backoffice') : undefined}
-    />
-  );
 }
 
 async function recordSessionStart(emp: Employee, branchName: string) {
@@ -107,13 +46,69 @@ async function recordSessionStart(emp: Employee, branchName: string) {
   }
 }
 
-function buildEmployee(user: { id: string; email?: string; user_metadata?: Record<string, unknown> }): Employee {
-  const m = user.user_metadata ?? {};
-  return {
-    id: user.id,
-    first_name: (m.first_name as string) || (user.email?.split('@')[0] ?? 'User'),
-    last_name: (m.last_name as string) || '',
-    role: (m.role as Employee['role']) || 'Admin',
-    username: user.email ?? '',
-  };
+export default function App() {
+  const [booting, setBooting] = useState(true);
+  const [employee, setEmployee] = useState<Employee | null>(null);
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [view, setView] = useState<'pos' | 'backoffice'>('pos');
+
+  useEffect(() => {
+    const saved = localStorage.getItem(SESSION_KEY);
+    if (saved) {
+      try {
+        const emp: Employee = JSON.parse(saved);
+        setEmployee(emp);
+        loadSettings().then(setSettings);
+      } catch {
+        localStorage.removeItem(SESSION_KEY);
+      }
+    }
+    setBooting(false);
+  }, []);
+
+  async function handleLogin(emp: Employee) {
+    const s = await loadSettings();
+    localStorage.setItem(SESSION_KEY, JSON.stringify(emp));
+    setEmployee(emp);
+    setSettings(s);
+    recordSessionStart(emp, s.branch_name);
+  }
+
+  function handleLogout() {
+    localStorage.removeItem(SESSION_KEY);
+    setEmployee(null);
+    setSettings(null);
+    setView('pos');
+  }
+
+  if (booting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#0C1C28' }}>
+        <div className="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#6AAEC8 transparent #6AAEC8 #6AAEC8' }} />
+      </div>
+    );
+  }
+
+  if (!employee || !settings) {
+    return <LoginScreen onLogin={handleLogin} />;
+  }
+
+  if (view === 'backoffice') {
+    return (
+      <BackOffice
+        employee={employee}
+        settings={settings}
+        onClose={() => setView('pos')}
+      />
+    );
+  }
+
+  return (
+    <PosScreen
+      employee={employee}
+      settings={settings}
+      onLogout={handleLogout}
+      onOpenBackOffice={employee.role !== 'Cashier' ? () => setView('backoffice') : undefined}
+    />
+  );
 }
