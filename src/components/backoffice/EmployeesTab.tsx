@@ -237,7 +237,10 @@ function AddEmployeeModal({ onClose, onCreated }: { onClose: () => void; onCreat
       p_business_id: BUSINESS_ID,
       p_company_id: COMPANY_ID,
     });
-    if (rpcErr) { setError(rpcErr.message || 'Failed to create employee.'); }
+    if (rpcErr) {
+      const isDupe = rpcErr.code === '23505' || rpcErr.message?.toLowerCase().includes('unique') || rpcErr.message?.toLowerCase().includes('duplicate');
+      setError(isDupe ? `Username "${form.username.trim()}" is already taken. Please try a different username.` : (rpcErr.message || 'Failed to create employee.'));
+    }
     else { onCreated(); }
     setLoading(false);
   }
