@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from './lib/supabase';
+import { supabase, BUSINESS_ID, COMPANY_ID, setActiveIds } from './lib/supabase';
 import type { Employee, Settings } from './lib/types';
 import LoginScreen from './components/LoginScreen';
 import PosScreen from './components/PosScreen';
@@ -57,6 +57,7 @@ export default function App() {
     if (saved) {
       try {
         const emp: Employee = JSON.parse(saved);
+        if (emp.business_id) setActiveIds(emp.business_id, emp.company_id);
         setEmployee(emp);
         loadSettings().then(setSettings);
       } catch {
@@ -67,6 +68,7 @@ export default function App() {
   }, []);
 
   async function handleLogin(emp: Employee) {
+    setActiveIds(emp.business_id, emp.company_id);
     const s = await loadSettings();
     localStorage.setItem(SESSION_KEY, JSON.stringify(emp));
     setEmployee(emp);

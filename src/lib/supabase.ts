@@ -7,5 +7,12 @@ if (!url || !key) throw new Error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_AN
 
 export const supabase = createClient(url, key);
 
-export const BUSINESS_ID = import.meta.env.VITE_BUSINESS_ID as string;
-export const COMPANY_ID = import.meta.env.VITE_COMPANY_ID as string;
+// These start as env-var fallbacks and are overwritten after login
+// so every component that imports them gets the logged-in business automatically
+export let BUSINESS_ID = (import.meta.env.VITE_BUSINESS_ID as string) ?? '';
+export let COMPANY_ID  = (import.meta.env.VITE_COMPANY_ID  as string) ?? '';
+
+export function setActiveIds(businessId: string, companyId: string) {
+  BUSINESS_ID = businessId;
+  COMPANY_ID  = companyId;
+}

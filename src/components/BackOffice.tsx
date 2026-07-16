@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Package, ShoppingBag, Sparkles, Tag, Receipt, Users, UserCog, Settings, ArrowLeft, MapPin, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Sparkles, Tag, Receipt, Users, UserCog, Settings, ArrowLeft, MapPin, Menu, X, Activity } from 'lucide-react';
 import type { Employee, Settings as SettingsType } from '../lib/types';
 import OverviewTab    from './backoffice/OverviewTab';
 import ProductsTab    from './backoffice/ProductsTab';
@@ -10,8 +10,9 @@ import SalesTab       from './backoffice/SalesTab';
 import CustomersTab   from './backoffice/CustomersTab';
 import EmployeesTab   from './backoffice/EmployeesTab';
 import SettingsTab    from './backoffice/SettingsTab';
+import EventsTab     from './backoffice/EventsTab';
 
-type BOTab = 'overview' | 'products' | 'services' | 'categories' | 'inventory' | 'sales' | 'customers' | 'employees' | 'settings';
+type BOTab = 'overview' | 'products' | 'services' | 'categories' | 'inventory' | 'sales' | 'customers' | 'employees' | 'events' | 'settings';
 
 interface Props { employee: Employee; settings: SettingsType; onClose: () => void; }
 
@@ -24,6 +25,7 @@ const TABS: { key: BOTab; label: string; icon: typeof LayoutDashboard; adminOnly
   { key: 'sales',      label: 'Sales',       icon: Receipt },
   { key: 'customers',  label: 'Customers',   icon: Users },
   { key: 'employees',  label: 'Employees',   icon: UserCog, adminOnly: true },
+  { key: 'events',     label: 'Events',      icon: Activity, adminOnly: true },
   { key: 'settings',   label: 'Settings',    icon: Settings },
 ];
 
@@ -153,6 +155,7 @@ export default function BackOffice({ employee, settings, onClose }: Props) {
           {activeTab === 'sales'      && <SalesTab      currencySymbol={cs} />}
           {activeTab === 'customers'  && <CustomersTab />}
           {activeTab === 'employees'  && <EmployeesTab  currentEmployee={employee} />}
+          {activeTab === 'events'     && <EventsTab     currencySymbol={cs} />}
           {activeTab === 'settings'   && <SettingsTab   currentEmployee={employee} settings={settings} />}
         </main>
       </div>

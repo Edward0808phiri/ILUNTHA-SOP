@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Eye, EyeOff, LoaderCircle, User, Lock } from 'lucide-react';
-import { supabase, BUSINESS_ID } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import type { Employee } from '../lib/types';
 
 interface Props {
@@ -23,7 +23,6 @@ export default function LoginScreen({ authError, onLogin }: Props) {
     const { data, error: rpcError } = await supabase.rpc('pos_authenticate', {
       p_username: username.trim().toLowerCase(),
       p_password: password,
-      p_business_id: BUSINESS_ID,
     });
 
     if (rpcError) {
@@ -38,6 +37,8 @@ export default function LoginScreen({ authError, onLogin }: Props) {
         last_name: row.last_name,
         role: row.role as Employee['role'],
         username: row.username,
+        business_id: row.business_id,
+        company_id: row.company_id,
       });
     }
 

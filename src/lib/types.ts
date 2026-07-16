@@ -4,6 +4,8 @@ export interface Employee {
   last_name: string;
   role: 'Admin' | 'Supervisor' | 'Cashier';
   username: string;
+  business_id: string;
+  company_id: string;
 }
 
 export interface Settings {
