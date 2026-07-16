@@ -74,7 +74,7 @@ export default function LoginScreen({ authError, onLogin }: Props) {
             </span>
           </div>
           <h1 className="text-3xl text-white tracking-tight leading-none" style={{ fontFamily: "'Playfair Display', Georgia, serif", fontWeight: 700 }}>
-            Clearskin
+            CleanSkinZm
           </h1>
           <p className="text-[11px] mt-2 tracking-[0.22em] uppercase" style={{ color: 'rgba(106,174,200,0.55)' }}>
             North Mead · Point of Sale
@@ -143,7 +143,7 @@ export default function LoginScreen({ authError, onLogin }: Props) {
         </div>
 
         <p className="text-center text-xs mt-6 tracking-wide" style={{ color: 'rgba(255,255,255,0.18)' }}>
-          Clearskin · North Mead
+          CleanSkinZm · North Mead
         </p>
       </div>
     </div>

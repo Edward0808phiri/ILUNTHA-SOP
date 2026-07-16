@@ -15,7 +15,7 @@ async function loadSettings(): Promise<Settings> {
     .eq('company_id', COMPANY_ID)
     .single();
   return (data as Settings | null) ?? {
-    store_name: 'Clearskin',
+    store_name: 'CleanSkinZm',
     branch_name: 'North Mead',
     currency_symbol: 'K',
     tax_rate: 0,

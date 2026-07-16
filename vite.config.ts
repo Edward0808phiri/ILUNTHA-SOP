@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon.svg', 'icons/icon-maskable.svg'],
       manifest: {
-        name: 'Clearskin POS',
-        short_name: 'Clearskin',
-        description: 'Clearskin North Mead – Point of Sale',
+        name: 'CleanSkinZm POS',
+        short_name: 'CleanSkinZm',
+        description: 'CleanSkinZm North Mead – Point of Sale',
         theme_color: '#6AAEC8',
         background_color: '#0C1C28',
         display: 'standalone',
