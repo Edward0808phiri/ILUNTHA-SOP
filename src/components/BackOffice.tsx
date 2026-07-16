@@ -38,6 +38,8 @@ export default function BackOffice({ employee, settings, onClose }: Props) {
   const [activeTab, setActiveTab] = useState<BOTab>('overview');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const cs = settings.currency_symbol;
+  const businessId = employee.business_id;
+  const companyId  = employee.company_id;
 
   const visibleTabs = TABS.filter(t => !t.adminOnly || employee.role === 'Admin');
   const active = visibleTabs.find(t => t.key === activeTab) ?? visibleTabs[0];
