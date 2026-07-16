@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UserPlus, KeyRound, ToggleLeft, ToggleRight, X, Eye, EyeOff, LoaderCircle } from 'lucide-react';
+import { UserPlus, KeyRound, ToggleLeft, ToggleRight, X, Eye, EyeOff, LoaderCircle, Pencil } from 'lucide-react';
 import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
 import type { Employee } from '../../lib/types';
 
@@ -31,6 +31,7 @@ export default function EmployeesTab({ currentEmployee }: Props) {
   const [loading, setLoading] = useState(true);
   const [showAdd, setShowAdd] = useState(false);
   const [pwTarget, setPwTarget] = useState<Emp | null>(null);
+  const [editTarget, setEditTarget] = useState<Emp | null>(null);
 
   async function load() {
     const { data } = await supabase
@@ -104,12 +105,19 @@ export default function EmployeesTab({ currentEmployee }: Props) {
             {isAdmin && (
               <div className="flex items-center gap-2 pt-2 border-t border-slate-50">
                 <button
+                  onClick={() => setEditTarget(emp)}
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition bg-slate-50 text-slate-600"
+                >
+                  <Pencil className="w-3.5 h-3.5" />
+                  Edit
+                </button>
+                <button
                   onClick={() => setPwTarget(emp)}
                   className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl text-xs font-semibold transition"
                   style={{ background: BLUE_LIGHT, color: BLUE_DARK }}
                 >
                   <KeyRound className="w-3.5 h-3.5" />
-                  Change Password
+                  Password
                 </button>
                 {emp.id !== currentEmployee.id && (
                   <button
@@ -162,6 +170,9 @@ export default function EmployeesTab({ currentEmployee }: Props) {
                 {isAdmin && (
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
+                      <button onClick={() => setEditTarget(emp)} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-50 text-slate-600 hover:bg-slate-100">
+                        <Pencil className="w-3 h-3" /> Edit
+                      </button>
                       <button onClick={() => setPwTarget(emp)} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition" style={{ background: BLUE_LIGHT, color: BLUE_DARK }}>
                         <KeyRound className="w-3 h-3" /> Password
                       </button>
@@ -185,6 +196,14 @@ export default function EmployeesTab({ currentEmployee }: Props) {
         <AddEmployeeModal
           onClose={() => setShowAdd(false)}
           onCreated={() => { setShowAdd(false); load(); }}
+        />
+      )}
+
+      {editTarget && (
+        <EditEmployeeModal
+          employee={editTarget}
+          onClose={() => setEditTarget(null)}
+          onSaved={() => { setEditTarget(null); load(); }}
         />
       )}
 
@@ -273,6 +292,86 @@ function AddEmployeeModal({ onClose, onCreated }: { onClose: () => void; onCreat
           >
             {loading ? <LoaderCircle className="w-4 h-4 animate-spin" /> : 'Create Employee'}
           </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function EditEmployeeModal({ employee, onClose, onSaved }: { employee: Emp; onClose: () => void; onSaved: () => void }) {
+  const [form, setForm] = useState({
+    first_name: employee.first_name,
+    last_name:  employee.last_name,
+    username:   employee.username,
+    role:       employee.role,
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState('');
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError('');
+    if (!form.first_name.trim()) { setError('First name is required.'); return; }
+    if (!form.username.trim())   { setError('Username is required.'); return; }
+    setLoading(true);
+    const { error: err } = await supabase
+      .from('employees')
+      .update({
+        first_name: form.first_name.trim(),
+        last_name:  form.last_name.trim(),
+        username:   form.username.trim().toLowerCase(),
+        role:       form.role,
+      })
+      .eq('id', employee.id)
+      .eq('business_id', BUSINESS_ID);
+    if (err) { setError(err.message || 'Failed to save changes.'); }
+    else { onSaved(); }
+    setLoading(false);
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+      <div className="bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl w-full sm:max-w-md overflow-hidden">
+        <div className="h-1" style={{ background: `linear-gradient(to right, ${BLUE}, ${ORANGE})` }} />
+        <div className="flex items-center justify-between px-6 pt-5 pb-2">
+          <div>
+            <h2 className="text-lg font-bold text-slate-800" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Edit Employee</h2>
+            <p className="text-xs text-slate-400 mt-0.5">@{employee.username}</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-xl text-slate-400 hover:bg-slate-100"><X className="w-4 h-4" /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="px-6 pb-6 space-y-3">
+          {error && <div className="text-sm px-3 py-2 rounded-xl" style={{ background: '#FEF0E8', color: ORANGE }}>{error}</div>}
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="First Name" value={form.first_name} onChange={v => setForm(f => ({ ...f, first_name: v }))} required />
+            <Field label="Last Name"  value={form.last_name}  onChange={v => setForm(f => ({ ...f, last_name: v }))} />
+          </div>
+          <Field label="Username" value={form.username} onChange={v => setForm(f => ({ ...f, username: v }))} required />
+          <div>
+            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wide">Role</label>
+            <select
+              value={form.role}
+              onChange={e => setForm(f => ({ ...f, role: e.target.value }))}
+              className="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-sm outline-none focus:border-[#6AAEC8] transition bg-white"
+            >
+              <option value="Cashier">Cashier</option>
+              <option value="Supervisor">Supervisor</option>
+              <option value="Admin">Admin</option>
+            </select>
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button type="button" onClick={onClose} className="flex-1 py-3 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold">
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 py-3 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60"
+              style={{ background: `linear-gradient(135deg, ${BLUE} 0%, ${BLUE_DARK} 100%)` }}
+            >
+              {loading ? <LoaderCircle className="w-4 h-4 animate-spin" /> : 'Save Changes'}
+            </button>
+          </div>
         </form>
       </div>
     </div>
