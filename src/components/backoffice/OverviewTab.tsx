@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { TrendingUp, ShoppingCart, Package, AlertTriangle, Clock, CalendarCheck } from 'lucide-react';
-import { supabase, BUSINESS_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import type { Settings } from '../../lib/types';
 
-interface Props { settings: Settings; }
+interface Props { settings: Settings; businessId: string; }
 
 const BLUE      = '#6AAEC8';
 const BLUE_DARK = '#4E96B0';

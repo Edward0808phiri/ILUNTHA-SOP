@@ -149,15 +149,15 @@ export default function BackOffice({ employee, settings, onClose }: Props) {
 
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-3 md:p-6">
-          {activeTab === 'overview'   && <OverviewTab   settings={settings} />}
-          {activeTab === 'products'   && <ProductsTab   currencySymbol={cs} />}
-          {activeTab === 'services'   && <ServicesTab   currencySymbol={cs} />}
-          {activeTab === 'categories' && <CategoriesTab />}
-          {activeTab === 'inventory'  && <InventoryTab  currencySymbol={cs} />}
-          {activeTab === 'sales'      && <SalesTab      currencySymbol={cs} />}
-          {activeTab === 'customers'  && <CustomersTab />}
+          {activeTab === 'overview'   && <OverviewTab   settings={settings} businessId={businessId} />}
+          {activeTab === 'products'   && <ProductsTab   currencySymbol={cs} businessId={businessId} companyId={companyId} />}
+          {activeTab === 'services'   && <ServicesTab   currencySymbol={cs} businessId={businessId} companyId={companyId} />}
+          {activeTab === 'categories' && <CategoriesTab businessId={businessId} companyId={companyId} />}
+          {activeTab === 'inventory'  && <InventoryTab  currencySymbol={cs} businessId={businessId} />}
+          {activeTab === 'sales'      && <SalesTab      currencySymbol={cs} businessId={businessId} />}
+          {activeTab === 'customers'  && <CustomersTab  businessId={businessId} companyId={companyId} />}
           {activeTab === 'employees'  && <EmployeesTab  currentEmployee={employee} />}
-          {activeTab === 'events'     && <EventsTab     currencySymbol={cs} />}
+          {activeTab === 'events'     && <EventsTab     currencySymbol={cs} businessId={businessId} />}
           {activeTab === 'settings'   && <SettingsTab   currentEmployee={employee} settings={settings} />}
         </main>
       </div>
