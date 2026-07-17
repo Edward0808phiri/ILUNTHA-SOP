@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import { LogOut, Search, Grid3X3, Sparkles, ShoppingCart, Settings as SettingsIcon } from 'lucide-react';
-import { supabase, BUSINESS_ID } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import type { Employee, Settings, Product, Service, Category, CartItem } from '../lib/types';
 import Cart from './Cart';
 import CheckoutModal from './CheckoutModal';
@@ -39,7 +39,7 @@ export default function PosScreen({ employee, settings, onLogout, onOpenBackOffi
     const { data } = await supabase
       .from('inventory')
       .select('product_id, quantity')
-      .eq('business_id', BUSINESS_ID);
+      .eq('business_id', employee.business_id);
     if (data) {
       const map: Record<string, number> = {};
       for (const row of data) map[row.product_id] = row.quantity;
@@ -54,24 +54,24 @@ export default function PosScreen({ employee, settings, onLogout, onOpenBackOffi
         supabase
           .from('products')
           .select('id, name, sku, price, color_hex, image_url, status, category_id, category:categories(name)')
-          .eq('business_id', BUSINESS_ID)
+          .eq('business_id', employee.business_id)
           .eq('status', 'active')
           .order('name'),
         supabase
           .from('services')
           .select('id, name, price, is_active')
-          .eq('business_id', BUSINESS_ID)
+          .eq('business_id', employee.business_id)
           .eq('is_active', true)
           .order('name'),
         supabase
           .from('categories')
           .select('id, name, sort_order')
-          .eq('business_id', BUSINESS_ID)
+          .eq('business_id', employee.business_id)
           .order('sort_order'),
         supabase
           .from('inventory')
           .select('product_id, quantity')
-          .eq('business_id', BUSINESS_ID),
+          .eq('business_id', employee.business_id),
       ]);
       if (prodRes.data) setProducts(prodRes.data as unknown as Product[]);
       if (svcRes.data) setServices(svcRes.data as Service[]);

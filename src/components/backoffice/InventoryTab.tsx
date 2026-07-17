@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Search, AlertTriangle, Plus, Minus } from 'lucide-react';
-import { supabase, BUSINESS_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 interface StockRow {
   product_id: string;
@@ -13,13 +13,13 @@ interface StockRow {
   } | null;
 }
 
-interface Props { currencySymbol: string; }
+interface Props { currencySymbol: string; businessId: string; }
 
 const BLUE      = '#6AAEC8';
 const BLUE_DARK = '#4E96B0';
 const BLUE_LIGHT = '#D4EBF5';
 
-export default function InventoryTab({ currencySymbol: _cs }: Props) {
+export default function InventoryTab({ currencySymbol: _cs, businessId }: Props) {
   const [rows, setRows] = useState<StockRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -30,7 +30,7 @@ export default function InventoryTab({ currencySymbol: _cs }: Props) {
     const { data } = await supabase
       .from('inventory')
       .select('product_id, quantity, products(name, sku, reorder_point, category:categories(name))')
-      .eq('business_id', BUSINESS_ID)
+      .eq('business_id', businessId)
       .order('quantity', { ascending: true });
     setRows((data ?? []) as unknown as StockRow[]);
     setLoading(false);
@@ -43,7 +43,7 @@ export default function InventoryTab({ currencySymbol: _cs }: Props) {
       .from('inventory')
       .update({ quantity: newQty, updated_at: new Date().toISOString() })
       .eq('product_id', productId)
-      .eq('business_id', BUSINESS_ID);
+      .eq('business_id', businessId);
     setAdjusting(null);
     load();
   }

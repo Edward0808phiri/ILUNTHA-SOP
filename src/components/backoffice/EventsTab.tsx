@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Receipt, LogIn, Package, UserPlus, Activity, Banknote, CreditCard, Smartphone, RefreshCw } from 'lucide-react';
-import { supabase, BUSINESS_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 interface SaleRow {
   id: string;
@@ -78,9 +78,9 @@ function KindIcon({ kind }: { kind: Event['kind'] }) {
   );
 }
 
-interface Props { currencySymbol: string; }
+interface Props { currencySymbol: string; businessId: string; }
 
-export default function EventsTab({ currencySymbol }: Props) {
+export default function EventsTab({ currencySymbol, businessId }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -91,13 +91,13 @@ export default function EventsTab({ currencySymbol }: Props) {
       supabase
         .from('sales')
         .select('id, created_at, invoice_number, total, employees(first_name, last_name), payments(method)')
-        .eq('business_id', BUSINESS_ID)
+        .eq('business_id', businessId)
         .order('created_at', { ascending: false })
         .limit(60),
       supabase
         .from('audit_logs')
         .select('id, created_at, action, detail_json')
-        .eq('business_id', BUSINESS_ID)
+        .eq('business_id', businessId)
         .order('created_at', { ascending: false })
         .limit(60),
     ]);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Search, Plus, Pencil, User, Phone, Mail, ShoppingBag, Star } from 'lucide-react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import Modal, { Field, inputCls } from './Modal';
 
 interface Customer { id: string; first_name: string; last_name: string; phone: string | null; email: string | null; number_of_buys: number; loyalty_points: number; }
@@ -8,7 +8,7 @@ const empty = { first_name: '', last_name: '', phone: '', email: '' };
 
 const BLUE = '#6AAEC8'; const BLUE_DARK = '#4E96B0'; const ORANGE = '#C47840';
 
-export default function CustomersTab() {
+export default function CustomersTab({ businessId, companyId }: { businessId: string; companyId: string }) {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -18,7 +18,7 @@ export default function CustomersTab() {
   const [error, setError] = useState('');
 
   async function load() {
-    const { data } = await supabase.from('customers').select('id,first_name,last_name,phone,email,number_of_buys,loyalty_points').eq('business_id', BUSINESS_ID).eq('is_active', true).order('first_name');
+    const { data } = await supabase.from('customers').select('id,first_name,last_name,phone,email,number_of_buys,loyalty_points').eq('business_id', businessId).eq('is_active', true).order('first_name');
     setCustomers((data ?? []) as Customer[]);
     setLoading(false);
   }
@@ -30,7 +30,7 @@ export default function CustomersTab() {
   async function save() {
     if (!form.first_name.trim()) { setError('First name is required.'); return; }
     setSaving(true); setError('');
-    const payload = { first_name: form.first_name.trim(), last_name: form.last_name.trim(), phone: form.phone || null, email: form.email || null, business_id: BUSINESS_ID, company_id: COMPANY_ID, is_active: true };
+    const payload = { first_name: form.first_name.trim(), last_name: form.last_name.trim(), phone: form.phone || null, email: form.email || null, business_id: businessId, company_id: companyId, is_active: true };
     if (modal === 'add') {
       const { error: e } = await supabase.from('customers').insert(payload);
       if (e) { setError(e.message); setSaving(false); return; }

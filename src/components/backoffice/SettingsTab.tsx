@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Eye, EyeOff, KeyRound, LoaderCircle, User } from 'lucide-react';
-import { supabase, BUSINESS_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import type { Employee, Settings } from '../../lib/types';
 
 interface Props { currentEmployee: Employee; settings: Settings; }
@@ -31,7 +31,7 @@ export default function SettingsTab({ currentEmployee, settings }: Props) {
     const { error: rpcErr } = await supabase.rpc('pos_change_password', {
       p_employee_id: currentEmployee.id,
       p_new_password: password,
-      p_business_id: BUSINESS_ID,
+      p_business_id: currentEmployee.business_id,
     });
     if (rpcErr) { setError(rpcErr.message || 'Failed to update password.'); }
     else { setSuccess(true); setPassword(''); setConfirm(''); }

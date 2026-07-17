@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { UserPlus, KeyRound, ToggleLeft, ToggleRight, X, Eye, EyeOff, LoaderCircle, Pencil } from 'lucide-react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import type { Employee } from '../../lib/types';
 
 interface Emp {
@@ -37,7 +37,7 @@ export default function EmployeesTab({ currentEmployee }: Props) {
     const { data } = await supabase
       .from('employees')
       .select('id, first_name, last_name, username, role, shift_status, is_active')
-      .eq('business_id', BUSINESS_ID)
+      .eq('business_id', currentEmployee.business_id)
       .order('first_name');
     setEmployees((data ?? []) as Emp[]);
     setLoading(false);
@@ -49,7 +49,7 @@ export default function EmployeesTab({ currentEmployee }: Props) {
     await supabase.from('employees')
       .update({ is_active: !emp.is_active })
       .eq('id', emp.id)
-      .eq('business_id', BUSINESS_ID);
+      .eq('business_id', currentEmployee.business_id);
     setEmployees(prev => prev.map(e => e.id === emp.id ? { ...e, is_active: !e.is_active } : e));
   }
 
@@ -234,8 +234,8 @@ function AddEmployeeModal({ onClose, onCreated }: { onClose: () => void; onCreat
       p_username: form.username.trim(),
       p_password: form.password,
       p_role: form.role,
-      p_business_id: BUSINESS_ID,
-      p_company_id: COMPANY_ID,
+      p_business_id: currentEmployee.business_id,
+      p_company_id: currentEmployee.company_id,
     });
     if (rpcErr) {
       const isDupe = rpcErr.code === '23505' || rpcErr.message?.toLowerCase().includes('unique') || rpcErr.message?.toLowerCase().includes('duplicate');
@@ -326,7 +326,7 @@ function EditEmployeeModal({ employee, onClose, onSaved }: { employee: Emp; onCl
         role:       form.role,
       })
       .eq('id', employee.id)
-      .eq('business_id', BUSINESS_ID);
+      .eq('business_id', currentEmployee.business_id);
     if (err) { setError(err.message || 'Failed to save changes.'); }
     else { onSaved(); }
     setLoading(false);
@@ -398,7 +398,7 @@ function ChangePasswordModal({ employee, onClose }: { employee: Emp; onClose: ()
     const { error: rpcErr } = await supabase.rpc('pos_change_password', {
       p_employee_id: employee.id,
       p_new_password: password,
-      p_business_id: BUSINESS_ID,
+      p_business_id: currentEmployee.business_id,
     });
     if (rpcErr) { setError(rpcErr.message || 'Failed to change password.'); }
     else { setDone(true); }

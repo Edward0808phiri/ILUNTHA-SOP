@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Trash2, Tag } from 'lucide-react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import Modal, { Field, inputCls } from './Modal';
 
 interface Category { id: string; name: string; sort_order: number; }
@@ -8,7 +8,7 @@ const empty = { name: '', sort_order: '0' };
 
 const BLUE = '#6AAEC8'; const BLUE_DARK = '#4E96B0';
 
-export default function CategoriesTab() {
+export default function CategoriesTab({ businessId, companyId }: { businessId: string; companyId: string }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<null | 'add' | Category>(null);
@@ -18,7 +18,7 @@ export default function CategoriesTab() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   async function load() {
-    const { data } = await supabase.from('categories').select('id,name,sort_order').eq('business_id', BUSINESS_ID).order('sort_order');
+    const { data } = await supabase.from('categories').select('id,name,sort_order').eq('business_id', businessId).order('sort_order');
     setCategories((data ?? []) as Category[]);
     setLoading(false);
   }
@@ -30,7 +30,7 @@ export default function CategoriesTab() {
   async function save() {
     if (!form.name.trim()) { setError('Name is required.'); return; }
     setSaving(true); setError('');
-    const payload = { name: form.name.trim(), sort_order: Number(form.sort_order) || 0, business_id: BUSINESS_ID, company_id: COMPANY_ID };
+    const payload = { name: form.name.trim(), sort_order: Number(form.sort_order) || 0, business_id: businessId, company_id: companyId };
     if (modal === 'add') {
       const { error: e } = await supabase.from('categories').insert(payload);
       if (e) { setError(e.message); setSaving(false); return; }

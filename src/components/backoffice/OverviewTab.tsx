@@ -10,7 +10,7 @@ const BLUE_DARK = '#4E96B0';
 const BLUE_LIGHT = '#D4EBF5';
 const ORANGE    = '#C47840';
 
-export default function OverviewTab({ settings }: Props) {
+export default function OverviewTab({ settings, businessId }: Props) {
   const cs = settings.currency_symbol;
   const [stats, setStats] = useState({ revenue: 0, sales: 0, products: 0, lowStock: 0 });
   const [shiftTime, setShiftTime] = useState<string | null>(null);
@@ -22,12 +22,12 @@ export default function OverviewTab({ settings }: Props) {
       const today = new Date(); today.setHours(0, 0, 0, 0);
 
       const [salesRes, productsRes, inventoryRes, shiftRes] = await Promise.all([
-        supabase.from('sales').select('total').eq('business_id', BUSINESS_ID).eq('status', 'completed').gte('created_at', today.toISOString()),
-        supabase.from('products').select('id', { count: 'exact', head: true }).eq('business_id', BUSINESS_ID).eq('status', 'active'),
-        supabase.from('inventory').select('quantity, products(reorder_point)').eq('business_id', BUSINESS_ID),
+        supabase.from('sales').select('total').eq('business_id', businessId).eq('status', 'completed').gte('created_at', today.toISOString()),
+        supabase.from('products').select('id', { count: 'exact', head: true }).eq('business_id', businessId).eq('status', 'active'),
+        supabase.from('inventory').select('quantity, products(reorder_point)').eq('business_id', businessId),
         supabase.from('audit_logs')
           .select('created_at, detail_json')
-          .eq('business_id', BUSINESS_ID)
+          .eq('business_id', businessId)
           .eq('action', 'pos.session_start')
           .gte('created_at', today.toISOString())
           .order('created_at', { ascending: true })

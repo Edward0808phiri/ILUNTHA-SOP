@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Search, Archive } from 'lucide-react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import Modal, { Field, inputCls, selectCls } from './Modal';
 
 interface Product {
@@ -13,7 +13,7 @@ interface Category { id: string; name: string; }
 const BLUE = '#6AAEC8'; const BLUE_DARK = '#4E96B0'; const ORANGE = '#C47840';
 const empty = { name: '', sku: '', price: '', cost: '', category_id: '', reorder_point: '0', status: 'active' };
 
-export default function ProductsTab({ currencySymbol }: { currencySymbol: string }) {
+export default function ProductsTab({ currencySymbol, businessId, companyId }: { currencySymbol: string; businessId: string; companyId: string }) {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,8 +25,8 @@ export default function ProductsTab({ currencySymbol }: { currencySymbol: string
 
   async function load() {
     const [prodRes, catRes] = await Promise.all([
-      supabase.from('products').select('id,name,sku,price,cost,status,category_id,reorder_point,category:categories(name)').eq('business_id', BUSINESS_ID).order('name'),
-      supabase.from('categories').select('id,name').eq('business_id', BUSINESS_ID).order('name'),
+      supabase.from('products').select('id,name,sku,price,cost,status,category_id,reorder_point,category:categories(name)').eq('business_id', businessId).order('name'),
+      supabase.from('categories').select('id,name').eq('business_id', businessId).order('name'),
     ]);
     setProducts((prodRes.data ?? []) as unknown as Product[]);
     setCategories((catRes.data ?? []) as Category[]);
@@ -43,11 +43,11 @@ export default function ProductsTab({ currencySymbol }: { currencySymbol: string
   async function save() {
     if (!form.name.trim() || !form.sku.trim()) { setError('Name and SKU are required.'); return; }
     setSaving(true); setError('');
-    const payload = { name: form.name.trim(), sku: form.sku.trim(), price: Number(form.price) || 0, cost: Number(form.cost) || 0, category_id: form.category_id || null, reorder_point: Number(form.reorder_point) || 0, status: form.status, business_id: BUSINESS_ID, company_id: COMPANY_ID };
+    const payload = { name: form.name.trim(), sku: form.sku.trim(), price: Number(form.price) || 0, cost: Number(form.cost) || 0, category_id: form.category_id || null, reorder_point: Number(form.reorder_point) || 0, status: form.status, business_id: businessId, company_id: companyId };
     if (modal === 'add') {
       const { data: newProd, error: e } = await supabase.from('products').insert(payload).select('id').single();
       if (e || !newProd) { setError(e?.message ?? 'Insert failed'); setSaving(false); return; }
-      await supabase.from('inventory').insert({ business_id: BUSINESS_ID, company_id: COMPANY_ID, product_id: newProd.id, quantity: 0 });
+      await supabase.from('inventory').insert({ business_id: businessId, company_id: companyId, product_id: newProd.id, quantity: 0 });
     } else {
       const { error: e } = await supabase.from('products').update({ ...payload, updated_at: new Date().toISOString() }).eq('id', (modal as Product).id);
       if (e) { setError(e.message); setSaving(false); return; }

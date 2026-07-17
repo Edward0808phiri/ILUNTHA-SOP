@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { X, Banknote, CreditCard, Smartphone, LoaderCircle, CheckCircle } from 'lucide-react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import type { CartItem, Employee, Settings } from '../lib/types';
 
 interface Props {
@@ -39,24 +39,24 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
       const { data: counter } = await supabase
         .from('invoice_counters')
         .select('last_number')
-        .eq('business_id', BUSINESS_ID)
-        .eq('company_id', COMPANY_ID)
+        .eq('business_id', employee.business_id)
+        .eq('company_id', employee.company_id)
         .single();
 
       const nextNum = (counter?.last_number ?? 0) + 1;
       const invoiceNumber = `INV-${String(nextNum).padStart(6, '0')}`;
 
       await supabase.from('invoice_counters').upsert({
-        business_id: BUSINESS_ID,
-        company_id: COMPANY_ID,
+        business_id: employee.business_id,
+        company_id: employee.company_id,
         last_number: nextNum,
       });
 
       const { data: sale, error: saleErr } = await supabase
         .from('sales')
         .insert({
-          business_id: BUSINESS_ID,
-          company_id: COMPANY_ID,
+          business_id: employee.business_id,
+          company_id: employee.company_id,
           employee_id: employee.id,
           invoice_number: invoiceNumber,
           subtotal,
@@ -72,8 +72,8 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
       if (saleErr || !sale) throw new Error(saleErr?.message || 'Failed to create sale');
 
       const saleItems = cart.map((item) => ({
-        business_id: BUSINESS_ID,
-        company_id: COMPANY_ID,
+        business_id: employee.business_id,
+        company_id: employee.company_id,
         sale_id: sale.id,
         item_type: item.type,
         product_id: item.type === 'product' ? item.id : null,
@@ -90,8 +90,8 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
       await supabase.from('sale_items').insert(saleItems);
 
       await supabase.from('payments').insert({
-        business_id: BUSINESS_ID,
-        company_id: COMPANY_ID,
+        business_id: employee.business_id,
+        company_id: employee.company_id,
         sale_id: sale.id,
         method,
         amount: total,
@@ -106,14 +106,14 @@ export default function CheckoutModal({ cart, setCart, employee, settings, onClo
           .from('inventory')
           .select('quantity')
           .eq('product_id', item.id)
-          .eq('business_id', BUSINESS_ID)
+          .eq('business_id', employee.business_id)
           .single();
         if (inv) {
           await supabase
             .from('inventory')
             .update({ quantity: Math.max(0, inv.quantity - item.quantity) })
             .eq('product_id', item.id)
-            .eq('business_id', BUSINESS_ID);
+            .eq('business_id', employee.business_id);
         }
       }
 

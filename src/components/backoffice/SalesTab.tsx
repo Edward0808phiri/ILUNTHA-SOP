@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Receipt, Banknote, CreditCard, Smartphone } from 'lucide-react';
-import { supabase, BUSINESS_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 interface Sale {
   id: string; invoice_number: string; total: number; status: string;
@@ -8,7 +8,7 @@ interface Sale {
   employees: { first_name: string; last_name: string } | null;
   payments: { method: string; amount: number }[];
 }
-interface Props { currencySymbol: string; }
+interface Props { currencySymbol: string; businessId: string; }
 
 const BLUE = '#6AAEC8'; const BLUE_DARK = '#4E96B0'; const ORANGE = '#C47840';
 
@@ -42,7 +42,7 @@ function PaymentBadge({ method }: { method: string }) {
   );
 }
 
-export default function SalesTab({ currencySymbol }: Props) {
+export default function SalesTab({ currencySymbol, businessId }: Props) {
   const [sales, setSales] = useState<Sale[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +50,7 @@ export default function SalesTab({ currencySymbol }: Props) {
     supabase
       .from('sales')
       .select('id, invoice_number, total, status, created_at, employees(first_name, last_name), payments(method, amount)')
-      .eq('business_id', BUSINESS_ID)
+      .eq('business_id', businessId)
       .order('created_at', { ascending: false })
       .limit(100)
       .then(({ data }) => { setSales((data ?? []) as unknown as Sale[]); setLoading(false); });

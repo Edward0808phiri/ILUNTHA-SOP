@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Plus, Pencil, Search, Sparkles } from 'lucide-react';
-import { supabase, BUSINESS_ID, COMPANY_ID } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import Modal, { Field, inputCls } from './Modal';
 
 interface Service { id: string; name: string; price: number; description: string | null; is_active: boolean; }
@@ -8,7 +8,7 @@ const empty = { name: '', price: '', description: '', is_active: true };
 
 const BLUE = '#6AAEC8'; const BLUE_DARK = '#4E96B0'; const ORANGE = '#C47840';
 
-export default function ServicesTab({ currencySymbol }: { currencySymbol: string }) {
+export default function ServicesTab({ currencySymbol, businessId, companyId }: { currencySymbol: string; businessId: string; companyId: string }) {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -18,7 +18,7 @@ export default function ServicesTab({ currencySymbol }: { currencySymbol: string
   const [error, setError] = useState('');
 
   async function load() {
-    const { data } = await supabase.from('services').select('id,name,price,description,is_active').eq('business_id', BUSINESS_ID).order('name');
+    const { data } = await supabase.from('services').select('id,name,price,description,is_active').eq('business_id', businessId).order('name');
     setServices((data ?? []) as Service[]);
     setLoading(false);
   }
@@ -30,7 +30,7 @@ export default function ServicesTab({ currencySymbol }: { currencySymbol: string
   async function save() {
     if (!form.name.trim()) { setError('Name is required.'); return; }
     setSaving(true); setError('');
-    const payload = { name: form.name.trim(), price: Number(form.price) || 0, description: form.description || null, is_active: form.is_active, business_id: BUSINESS_ID, company_id: COMPANY_ID };
+    const payload = { name: form.name.trim(), price: Number(form.price) || 0, description: form.description || null, is_active: form.is_active, business_id: businessId, company_id: companyId };
     if (modal === 'add') {
       const { error: e } = await supabase.from('services').insert(payload);
       if (e) { setError(e.message); setSaving(false); return; }

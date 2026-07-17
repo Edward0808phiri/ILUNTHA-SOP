@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Package, ShoppingBag, Sparkles, Tag, Receipt, Users, UserCog, Settings, ArrowLeft, MapPin, Menu, X, Activity } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Sparkles, Tag, Receipt, Users, UserCog, Settings, ArrowLeft, MapPin, Menu, X, Activity, TrendingDown } from 'lucide-react';
 import type { Employee, Settings as SettingsType } from '../lib/types';
 import OverviewTab    from './backoffice/OverviewTab';
 import ProductsTab    from './backoffice/ProductsTab';
@@ -10,9 +10,10 @@ import SalesTab       from './backoffice/SalesTab';
 import CustomersTab   from './backoffice/CustomersTab';
 import EmployeesTab   from './backoffice/EmployeesTab';
 import SettingsTab    from './backoffice/SettingsTab';
-import EventsTab     from './backoffice/EventsTab';
+import EventsTab      from './backoffice/EventsTab';
+import ExpensesTab    from './backoffice/ExpensesTab';
 
-type BOTab = 'overview' | 'products' | 'services' | 'categories' | 'inventory' | 'sales' | 'customers' | 'employees' | 'events' | 'settings';
+type BOTab = 'overview' | 'products' | 'services' | 'categories' | 'inventory' | 'sales' | 'customers' | 'employees' | 'events' | 'expenses' | 'settings';
 
 interface Props { employee: Employee; settings: SettingsType; onClose: () => void; }
 
@@ -24,8 +25,9 @@ const TABS: { key: BOTab; label: string; icon: typeof LayoutDashboard; adminOnly
   { key: 'inventory',  label: 'Stock',       icon: Package },
   { key: 'sales',      label: 'Sales',       icon: Receipt },
   { key: 'customers',  label: 'Customers',   icon: Users },
-  { key: 'employees',  label: 'Employees',   icon: UserCog, adminOnly: true },
-  { key: 'events',     label: 'Events',      icon: Activity, adminOnly: true },
+  { key: 'employees',  label: 'Employees',   icon: UserCog,      adminOnly: true },
+  { key: 'expenses',   label: 'Expenses',    icon: TrendingDown, adminOnly: true },
+  { key: 'events',     label: 'Events',      icon: Activity,     adminOnly: true },
   { key: 'settings',   label: 'Settings',    icon: Settings },
 ];
 
@@ -157,6 +159,7 @@ export default function BackOffice({ employee, settings, onClose }: Props) {
           {activeTab === 'sales'      && <SalesTab      currencySymbol={cs} businessId={businessId} />}
           {activeTab === 'customers'  && <CustomersTab  businessId={businessId} companyId={companyId} />}
           {activeTab === 'employees'  && <EmployeesTab  currentEmployee={employee} />}
+          {activeTab === 'expenses'   && <ExpensesTab    currencySymbol={cs} businessId={businessId} companyId={companyId} currentEmployee={employee} />}
           {activeTab === 'events'     && <EventsTab     currencySymbol={cs} businessId={businessId} />}
           {activeTab === 'settings'   && <SettingsTab   currentEmployee={employee} settings={settings} />}
         </main>
