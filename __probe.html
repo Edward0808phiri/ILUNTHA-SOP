@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="UTF-8" /><title>probe</title>
+  <style>html,body{margin:0;background:#334} iframe{width:390px;height:2100px;border:0;display:block;margin:0 auto;background:#fff}</style>
+  </head>
+  <body>
+    <iframe id="f" src="/__preview.html"></iframe>
+    <script type="module">
+      setTimeout(() => {
+        const doc = document.getElementById('f').contentDocument;
+        const vw = doc.documentElement.clientWidth;
+        const out = [];
+        doc.querySelectorAll('*').forEach(el => {
+          const r = el.getBoundingClientRect();
+          if (r.right > vw + 1) out.push(`${el.tagName}.${String(el.className.baseVal ?? el.className).slice(0,70)} | w=${Math.round(r.width)} right=${Math.round(r.right)}`);
+        });
+        const pre = document.createElement('pre');
+        pre.id = 'probe-out';
+        pre.textContent = `viewport=${vw} scrollW=${doc.documentElement.scrollWidth}\n` + out.slice(0,30).join('\n');
+        document.body.prepend(pre);
+      }, 2000);
+    </script>
+  </body>
+</html>

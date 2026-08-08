@@ -459,7 +459,7 @@ export function Donut({ data, currency, size = 132 }: {
           })
         )}
       </svg>
-      <div className="space-y-2 min-w-0 flex-1">
+      <div className="space-y-2 min-w-0 flex-1" style={{ maxWidth: 340 }}>
         {data.map(d => (
           <div key={d.label} className="flex items-center gap-2 text-xs">
             <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: d.color }} />

@@ -292,11 +292,17 @@ export default function ReportsTab({ currencySymbol: cs, businessId }: Props) {
       </ChartCard>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Expenses by Category" hint={`Top ${Math.min(8, byCategory.length) || ''} of ${byCategory.length}`.replace(' of 0', '')}>
+        <ChartCard
+          title="Expenses by Category"
+          hint={byCategory.length > 8 ? `Top 8 of ${byCategory.length} categories` : 'Where the money went'}
+        >
           <HBars data={byCategory} color={VIZ.expense} currency={cs} />
         </ChartCard>
 
-        <ChartCard title="Top Sellers" hint="Revenue by product and service">
+        <ChartCard
+          title="Top Sellers"
+          hint={topItems.length > 8 ? `Top 8 of ${topItems.length} items by revenue` : 'Revenue by product and service'}
+        >
           <HBars data={topItems} color={VIZ.income} currency={cs} />
         </ChartCard>
       </div>
