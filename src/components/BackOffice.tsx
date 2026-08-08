@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LayoutDashboard, Package, ShoppingBag, Sparkles, Tag, Receipt, Users, UserCog, Settings, ArrowLeft, MapPin, Menu, X, Activity, TrendingDown } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingBag, Sparkles, Tag, Receipt, Users, UserCog, Settings, ArrowLeft, MapPin, Menu, X, Activity, TrendingDown, BarChart3 } from 'lucide-react';
 import type { Employee, Settings as SettingsType } from '../lib/types';
 import OverviewTab    from './backoffice/OverviewTab';
 import ProductsTab    from './backoffice/ProductsTab';
@@ -12,13 +12,15 @@ import EmployeesTab   from './backoffice/EmployeesTab';
 import SettingsTab    from './backoffice/SettingsTab';
 import EventsTab      from './backoffice/EventsTab';
 import ExpensesTab    from './backoffice/ExpensesTab';
+import ReportsTab     from './backoffice/ReportsTab';
 
-type BOTab = 'overview' | 'products' | 'services' | 'categories' | 'inventory' | 'sales' | 'customers' | 'employees' | 'events' | 'expenses' | 'settings';
+type BOTab = 'overview' | 'reports' | 'products' | 'services' | 'categories' | 'inventory' | 'sales' | 'customers' | 'employees' | 'events' | 'expenses' | 'settings';
 
 interface Props { employee: Employee; settings: SettingsType; onClose: () => void; }
 
 const TABS: { key: BOTab; label: string; icon: typeof LayoutDashboard; adminOnly?: boolean }[] = [
   { key: 'overview',   label: 'Overview',    icon: LayoutDashboard },
+  { key: 'reports',    label: 'Reports',     icon: BarChart3,    adminOnly: true },
   { key: 'products',   label: 'Products',    icon: ShoppingBag },
   { key: 'services',   label: 'Services',    icon: Sparkles },
   { key: 'categories', label: 'Categories',  icon: Tag },
@@ -152,6 +154,7 @@ export default function BackOffice({ employee, settings, onClose }: Props) {
         {/* Content */}
         <main className="flex-1 overflow-y-auto p-3 md:p-6">
           {activeTab === 'overview'   && <OverviewTab   settings={settings} businessId={businessId} />}
+          {activeTab === 'reports'    && <ReportsTab    currencySymbol={cs} businessId={businessId} />}
           {activeTab === 'products'   && <ProductsTab   currencySymbol={cs} businessId={businessId} companyId={companyId} />}
           {activeTab === 'services'   && <ServicesTab   currencySymbol={cs} businessId={businessId} companyId={companyId} />}
           {activeTab === 'categories' && <CategoriesTab businessId={businessId} companyId={companyId} />}
